@@ -376,6 +376,34 @@
         .hidden {
             display: none;
         }
+        
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8BD3E6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -607,20 +635,53 @@
             username: "geors",
             password: "Maxi2930.."
         };
+
+        // Mostrar carga
+        function showLoading() {
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = '<div class="spinner"></div>';
+            document.body.appendChild(overlay);
+            return overlay;
+        }
+
+        // Ocultar carga
+        function hideLoading(overlay) {
+            if (overlay) overlay.remove();
+        }
         
         // Iniciar sesión
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
             
-            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                loginContainer.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-                loadProducts();
-            } else {
+            // Validar campos vacíos
+            if (!username || !password) {
+                loginAlert.textContent = "Por favor, completa todos los campos";
                 loginAlert.classList.remove('hidden');
+                return;
+            }
+            
+            const loading = showLoading();
+            
+            try {
+                // Verificar credenciales
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    loginContainer.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    await loadProducts();
+                } else {
+                    loginAlert.textContent = "Credenciales incorrectas. Inténtalo de nuevo.";
+                    loginAlert.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Error en inicio de sesión:", error);
+                loginAlert.textContent = "Error en el sistema. Inténtalo más tarde.";
+                loginAlert.classList.remove('hidden');
+            } finally {
+                hideLoading(loading);
             }
         });
         
@@ -662,53 +723,65 @@
         
         // Cargar productos
         async function loadProducts() {
-            const { data: productos, error } = await supabase
-                .from('productos')
-                .select('*')
-                .order('id', { ascending: false });
+            const loading = showLoading();
             
-            if (error) {
+            try {
+                const { data: productos, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .order('id', { ascending: false });
+                
+                if (error) throw error;
+                
+                // Actualizar contador
+                totalProducts.textContent = productos.length;
+                
+                // Limpiar lista
+                productsList.innerHTML = '';
+                
+                // Mostrar productos
+                productos.forEach(producto => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="product-image" style="background-image: url('${producto.imagen_url}')"></div>
+                        </td>
+                        <td>
+                            <strong>${producto.nombre}</strong><br>
+                            <small>${producto.descripcion.substring(0, 50)}...</small>
+                        </td>
+                        <td>$${parseFloat(producto.precio).toFixed(2)}</td>
+                        <td>${producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}</td>
+                        <td>${producto.edad_max_meses} meses</td>
+                        <td>
+                            <button class="action-btn edit-btn" data-id="${producto.id}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn" data-id="${producto.id}">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </td>
+                    `;
+                    
+                    productsList.appendChild(row);
+                });
+                
+                // Inicializar eventos de los botones
+                initProductEvents();
+                
+            } catch (error) {
+                console.error("Error cargando productos:", error);
                 productsAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Error cargando productos: ${error.message}
                 </div>`;
-                return;
+            } finally {
+                hideLoading(loading);
             }
-            
-            // Actualizar contador
-            totalProducts.textContent = productos.length;
-            
-            // Limpiar lista
-            productsList.innerHTML = '';
-            
-            // Mostrar productos
-            productos.forEach(producto => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td>
-                        <div class="product-image" style="background-image: url('${producto.imagen_url}')"></div>
-                    </td>
-                    <td>
-                        <strong>${producto.nombre}</strong><br>
-                        <small>${producto.descripcion.substring(0, 50)}...</small>
-                    </td>
-                    <td>$${parseFloat(producto.precio).toFixed(2)}</td>
-                    <td>${producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}</td>
-                    <td>${producto.edad_max_meses} meses</td>
-                    <td>
-                        <button class="action-btn edit-btn" data-id="${producto.id}">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="action-btn delete-btn" data-id="${producto.id}">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </td>
-                `;
-                
-                productsList.appendChild(row);
-            });
-            
-            // Agregar event listeners a los botones
+        }
+        
+        // Inicializar eventos de productos
+        function initProductEvents() {
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const productId = btn.getAttribute('data-id');
@@ -728,24 +801,53 @@
         productForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const productData = {
-                nombre: document.getElementById('product-name').value,
-                descripcion: document.getElementById('product-description').value,
-                precio: parseFloat(document.getElementById('product-price').value),
-                categoria: document.getElementById('product-category').value,
-                edad_max_meses: parseInt(document.getElementById('product-age').value),
-                imagen_url: document.getElementById('product-image').value
-            };
+            const name = document.getElementById('product-name').value.trim();
+            const description = document.getElementById('product-description').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const age = parseInt(document.getElementById('product-age').value);
+            const imageUrl = document.getElementById('product-image').value.trim();
             
-            const { data, error } = await supabase
-                .from('productos')
-                .insert([productData]);
-            
-            if (error) {
+            // Validación de campos
+            if (!name || !description || !imageUrl) {
                 addProductAlert.innerHTML = `<div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> Error al agregar producto: ${error.message}
+                    <i class="fas fa-exclamation-circle"></i> Todos los campos son obligatorios
                 </div>`;
-            } else {
+                return;
+            }
+            
+            if (isNaN(price) || price <= 0) {
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Precio inválido
+                </div>`;
+                return;
+            }
+            
+            if (isNaN(age) || age < 0 || age > 12) {
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Edad debe ser entre 0-12 meses
+                </div>`;
+                return;
+            }
+            
+            const loading = showLoading();
+            
+            try {
+                const productData = {
+                    nombre: name,
+                    descripcion: description,
+                    precio: price,
+                    categoria: category,
+                    edad_max_meses: age,
+                    imagen_url: imageUrl
+                };
+                
+                const { data, error } = await supabase
+                    .from('productos')
+                    .insert([productData]);
+                
+                if (error) throw error;
+                
                 addProductAlert.innerHTML = `<div class="alert alert-success">
                     <i class="fas fa-check-circle"></i> Producto agregado exitosamente!
                 </div>`;
@@ -754,7 +856,15 @@
                 productForm.reset();
                 
                 // Actualizar lista de productos
-                loadProducts();
+                await loadProducts();
+                
+            } catch (error) {
+                console.error("Error agregando producto:", error);
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Error al agregar producto: ${error.message}
+                </div>`;
+            } finally {
+                hideLoading(loading);
                 
                 // Ocultar mensaje después de 3 segundos
                 setTimeout(() => {
@@ -765,87 +875,133 @@
         
         // Editar producto
         async function editProduct(id) {
-            // Obtener datos del producto
-            const { data: producto, error } = await supabase
-                .from('productos')
-                .select('*')
-                .eq('id', id)
-                .single();
+            const loading = showLoading();
             
-            if (error) {
-                alert(`Error al obtener producto: ${error.message}`);
-                return;
-            }
-            
-            // Llenar formulario con datos del producto
-            document.getElementById('product-name').value = producto.nombre;
-            document.getElementById('product-description').value = producto.descripcion;
-            document.getElementById('product-price').value = producto.precio;
-            document.getElementById('product-category').value = producto.categoria;
-            document.getElementById('product-age').value = producto.edad_max_meses;
-            document.getElementById('product-image').value = producto.imagen_url;
-            
-            // Cambiar a la pestaña de agregar producto
-            document.querySelectorAll('.admin-nav a').forEach(a => {
-                a.classList.remove('active');
-            });
-            document.querySelector('.admin-nav a[href="#agregar-producto"]').classList.add('active');
-            
-            document.querySelectorAll('.admin-section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById('agregar-producto').classList.remove('hidden');
-            
-            // Cambiar el botón de guardar para actualizar
-            const submitBtn = productForm.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar Producto';
-            submitBtn.dataset.id = id;
-            
-            // Cambiar el evento de submit para actualizar
-            productForm.onsubmit = async (e) => {
-                e.preventDefault();
+            try {
+                // Obtener datos del producto
+                const { data: producto, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
                 
-                const productData = {
-                    nombre: document.getElementById('product-name').value,
-                    descripcion: document.getElementById('product-description').value,
-                    precio: parseFloat(document.getElementById('product-price').value),
-                    categoria: document.getElementById('product-category').value,
-                    edad_max_meses: parseInt(document.getElementById('product-age').value),
-                    imagen_url: document.getElementById('product-image').value
+                if (error) throw error;
+                
+                // Llenar formulario con datos del producto
+                document.getElementById('product-name').value = producto.nombre;
+                document.getElementById('product-description').value = producto.descripcion;
+                document.getElementById('product-price').value = producto.precio;
+                document.getElementById('product-category').value = producto.categoria;
+                document.getElementById('product-age').value = producto.edad_max_meses;
+                document.getElementById('product-image').value = producto.imagen_url;
+                
+                // Cambiar a la pestaña de agregar producto
+                document.querySelectorAll('.admin-nav a').forEach(a => {
+                    a.classList.remove('active');
+                });
+                document.querySelector('.admin-nav a[href="#agregar-producto"]').classList.add('active');
+                
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                document.getElementById('agregar-producto').classList.remove('hidden');
+                
+                // Cambiar el botón de guardar para actualizar
+                const submitBtn = productForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar Producto';
+                submitBtn.dataset.id = id;
+                
+                // Cambiar el evento de submit para actualizar
+                productForm.onsubmit = async (e) => {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('product-name').value.trim();
+                    const description = document.getElementById('product-description').value.trim();
+                    const price = parseFloat(document.getElementById('product-price').value);
+                    const category = document.getElementById('product-category').value;
+                    const age = parseInt(document.getElementById('product-age').value);
+                    const imageUrl = document.getElementById('product-image').value.trim();
+                    
+                    // Validación de campos (igual que en agregar)
+                    if (!name || !description || !imageUrl) {
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> Todos los campos son obligatorios
+                        </div>`;
+                        return;
+                    }
+                    
+                    if (isNaN(price) || price <= 0) {
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> Precio inválido
+                        </div>`;
+                        return;
+                    }
+                    
+                    if (isNaN(age) || age < 0 || age > 12) {
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> Edad debe ser entre 0-12 meses
+                        </div>`;
+                        return;
+                    }
+                    
+                    const updateLoading = showLoading();
+                    
+                    try {
+                        const productData = {
+                            nombre: name,
+                            descripcion: description,
+                            precio: price,
+                            categoria: category,
+                            edad_max_meses: age,
+                            imagen_url: imageUrl
+                        };
+                        
+                        const { error } = await supabase
+                            .from('productos')
+                            .update(productData)
+                            .eq('id', id);
+                        
+                        if (error) throw error;
+                        
+                        addProductAlert.innerHTML = `<div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> Producto actualizado exitosamente!
+                        </div>';
+                        
+                        // Restaurar formulario a estado normal
+                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
+                        delete submitBtn.dataset.id;
+                        productForm.reset();
+                        productForm.onsubmit = productForm.originalSubmit;
+                        
+                        // Actualizar lista de productos
+                        await loadProducts();
+                        
+                    } catch (error) {
+                        console.error("Error actualizando producto:", error);
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> Error al actualizar producto: ${error.message}
+                        </div>`;
+                    } finally {
+                        hideLoading(updateLoading);
+                        
+                        // Ocultar mensaje después de 3 segundos
+                        setTimeout(() => {
+                            addProductAlert.innerHTML = '';
+                        }, 3000);
+                    }
                 };
                 
-                const { error } = await supabase
-                    .from('productos')
-                    .update(productData)
-                    .eq('id', id);
+                // Guardar referencia al submit original
+                productForm.originalSubmit = productForm.onsubmit;
                 
-                if (error) {
-                    addProductAlert.innerHTML = `<div class="alert alert-error">
-                        <i class="fas fa-exclamation-circle"></i> Error al actualizar producto: ${error.message}
-                    </div>`;
-                } else {
-                    addProductAlert.innerHTML = `<div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i> Producto actualizado exitosamente!
-                    </div>`;
-                    
-                    // Restaurar formulario a estado normal
-                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
-                    delete submitBtn.dataset.id;
-                    productForm.reset();
-                    productForm.onsubmit = productForm.originalSubmit;
-                    
-                    // Actualizar lista de productos
-                    loadProducts();
-                    
-                    // Ocultar mensaje después de 3 segundos
-                    setTimeout(() => {
-                        addProductAlert.innerHTML = '';
-                    }, 3000);
-                }
-            };
-            
-            // Guardar referencia al submit original
-            productForm.originalSubmit = productForm.onsubmit;
+            } catch (error) {
+                console.error("Error obteniendo producto:", error);
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Error al cargar producto: ${error.message}
+                </div>`;
+            } finally {
+                hideLoading(loading);
+            }
         }
         
         // Eliminar producto
@@ -854,22 +1010,30 @@
                 return;
             }
             
-            const { error } = await supabase
-                .from('productos')
-                .delete()
-                .eq('id', id);
+            const loading = showLoading();
             
-            if (error) {
-                productsAlert.innerHTML = `<div class="alert alert-error">
-                    <i class="fas fa-exclamation-circle"></i> Error al eliminar producto: ${error.message}
-                </div>`;
-            } else {
+            try {
+                const { error } = await supabase
+                    .from('productos')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
                 productsAlert.innerHTML = `<div class="alert alert-success">
                     <i class="fas fa-check-circle"></i> Producto eliminado exitosamente!
                 </div>`;
                 
                 // Actualizar lista de productos
-                loadProducts();
+                await loadProducts();
+                
+            } catch (error) {
+                console.error("Error eliminando producto:", error);
+                productsAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Error al eliminar producto: ${error.message}
+                </div>`;
+            } finally {
+                hideLoading(loading);
                 
                 // Ocultar mensaje después de 3 segundos
                 setTimeout(() => {
@@ -958,3 +1122,4 @@
     </script>
 </body>
 </html>
+
