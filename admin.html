@@ -621,10 +621,10 @@
     </div>
 
     <script>
-        // 1. Primero inicializamos Supabase
+        // SOLUCIÓN: Cambiamos el nombre de la instancia para evitar conflicto
         const SUPABASE_URL = 'https://sgpfgyoizwvlwnxdfczn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // 2. Luego declaramos las variables del DOM
         const loginContainer = document.getElementById('login-container');
@@ -704,7 +704,7 @@
                     // Probar conexión con Supabase
                     try {
                         updateDebugInfo('Probando conexión con Supabase...');
-                        const { data, error } = await supabase
+                        const { data, error } = await supabaseClient
                             .from('productos')
                             .select('*')
                             .limit(1);
@@ -788,7 +788,7 @@
             updateDebugInfo('Cargando productos...');
             
             try {
-                const { data: productos, error } = await supabase
+                const { data: productos, error } = await supabaseClient
                     .from('productos')
                     .select('*')
                     .order('id', { ascending: false });
@@ -923,7 +923,7 @@
                 
                 updateDebugInfo(`Enviando datos: ${JSON.stringify(productData)}`);
                 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('productos')
                     .insert([productData]);
                 
@@ -963,7 +963,7 @@
             
             try {
                 // Obtener datos del producto
-                const { data: producto, error } = await supabase
+                const { data: producto, error } = await supabaseClient
                     .from('productos')
                     .select('*')
                     .eq('id', id)
@@ -1056,7 +1056,7 @@
                         
                         updateDebugInfo(`Actualizando con datos: ${JSON.stringify(productData)}`);
                         
-                        const { error } = await supabase
+                        const { error } = await supabaseClient
                             .from('productos')
                             .update(productData)
                             .eq('id', id);
@@ -1118,7 +1118,7 @@
             updateDebugInfo(`Eliminando producto ID: ${id}`);
             
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('productos')
                     .delete()
                     .eq('id', id);
