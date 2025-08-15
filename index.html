@@ -1122,12 +1122,12 @@
         const SUPABASE_URL = 'https://sgpfgyoizwvlwnxdfczn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
         
-        // Inicializar Supabase
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Inicializar Supabase con nombre diferente
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Función para cargar productos
         async function loadProducts() {
-            const { data: productos, error } = await supabase
+            const { data: productos, error } = await supabaseClient
                 .from('productos')
                 .select('*')
                 .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
@@ -1336,5 +1336,6 @@
     </script>
 </body>
 </html>
+
 
 
