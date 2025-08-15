@@ -621,14 +621,12 @@
     </div>
 
     <script>
-        // Configuración de Supabase
+        // 1. Primero inicializamos Supabase
         const SUPABASE_URL = 'https://sgpfgyoizwvlwnxdfczn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
-        
-        // Inicializar Supabase
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        // Elementos del DOM
+
+        // 2. Luego declaramos las variables del DOM
         const loginContainer = document.getElementById('login-container');
         const adminPanel = document.getElementById('admin-panel');
         const loginForm = document.getElementById('login-form');
@@ -1235,4 +1233,3 @@
     </script>
 </body>
 </html>
-
