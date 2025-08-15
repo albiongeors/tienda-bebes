@@ -404,6 +404,20 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Debug info */
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10000;
+            max-width: 400px;
+        }
     </style>
 </head>
 <body>
@@ -580,7 +594,7 @@
         <h2 class="section-title">Panel de Administración</h2>
         
         <div id="login-alert" class="alert alert-error hidden">
-            <i class="fas fa-exclamation-circle"></i> Credenciales incorrectas. Inténtalo de nuevo.
+            <i class="fas fa-exclamation-circle"></i> <span id="login-error-message">Credenciales incorrectas. Inténtalo de nuevo.</span>
         </div>
         
         <form id="login-form">
@@ -619,6 +633,7 @@
         const adminPanel = document.getElementById('admin-panel');
         const loginForm = document.getElementById('login-form');
         const loginAlert = document.getElementById('login-alert');
+        const loginErrorMessage = document.getElementById('login-error-message');
         const logoutBtn = document.getElementById('logout-btn');
         const productForm = document.getElementById('product-form');
         const productsList = document.getElementById('products-list');
@@ -634,6 +649,18 @@
             username: "geors",
             password: "Maxi2930.."
         };
+
+        // Mostrar información de depuración
+        const debugInfo = document.createElement('div');
+        debugInfo.className = 'debug-info';
+        debugInfo.innerHTML = 'Debug: No iniciado';
+        document.body.appendChild(debugInfo);
+
+        // Actualizar información de depuración
+        function updateDebugInfo(message) {
+            debugInfo.innerHTML = `Debug: ${message}`;
+            console.log(`DEBUG: ${message}`);
+        }
 
         // Mostrar carga
         function showLoading() {
@@ -652,13 +679,17 @@
         // Iniciar sesión
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            updateDebugInfo('Inicio de proceso de login');
             
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             
+            updateDebugInfo(`Usuario: ${username}, Contraseña: ${password ? '*****' : 'vacía'}`);
+            
             // Validar campos vacíos
             if (!username || !password) {
-                loginAlert.textContent = "Por favor, completa todos los campos";
+                updateDebugInfo('Campos vacíos detectados');
+                loginErrorMessage.textContent = "Por favor, completa todos los campos";
                 loginAlert.classList.remove('hidden');
                 return;
             }
@@ -666,18 +697,48 @@
             const loading = showLoading();
             
             try {
-                // Verificar credenciales
+                updateDebugInfo('Verificando credenciales...');
+                
+                // Verificación directa de credenciales
                 if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-                    loginContainer.classList.add('hidden');
-                    adminPanel.classList.remove('hidden');
-                    await loadProducts();
+                    updateDebugInfo('Credenciales correctas');
+                    
+                    // Probar conexión con Supabase
+                    try {
+                        updateDebugInfo('Probando conexión con Supabase...');
+                        const { data, error } = await supabase
+                            .from('productos')
+                            .select('*')
+                            .limit(1);
+                        
+                        if (error) {
+                            updateDebugInfo(`Error de Supabase: ${error.message}`);
+                            throw error;
+                        }
+                        
+                        updateDebugInfo('Conexión con Supabase exitosa');
+                        
+                        // Ocultar login y mostrar panel
+                        loginContainer.classList.add('hidden');
+                        adminPanel.classList.remove('hidden');
+                        updateDebugInfo('Panel de administración visible');
+                        
+                        // Cargar productos
+                        await loadProducts();
+                    } catch (error) {
+                        updateDebugInfo(`Error en conexión Supabase: ${error.message}`);
+                        loginErrorMessage.textContent = `Error de conexión con la base de datos: ${error.message}`;
+                        loginAlert.classList.remove('hidden');
+                    }
                 } else {
-                    loginAlert.textContent = "Credenciales incorrectas. Inténtalo de nuevo.";
+                    updateDebugInfo('Credenciales incorrectas');
+                    loginErrorMessage.textContent = "Credenciales incorrectas. Inténtalo de nuevo.";
                     loginAlert.classList.remove('hidden');
                 }
             } catch (error) {
+                updateDebugInfo(`Error en inicio de sesión: ${error.message}`);
                 console.error("Error en inicio de sesión:", error);
-                loginAlert.textContent = "Error en el sistema. Inténtalo más tarde.";
+                loginErrorMessage.textContent = "Error en el sistema. Inténtalo más tarde.";
                 loginAlert.classList.remove('hidden');
             } finally {
                 hideLoading(loading);
@@ -691,6 +752,7 @@
             loginAlert.classList.add('hidden');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
+            updateDebugInfo('Sesión cerrada');
         });
         
         // Navegación del panel
@@ -717,12 +779,15 @@
                 if (targetId === 'gestion-productos') {
                     loadProducts();
                 }
+                
+                updateDebugInfo(`Navegando a: ${targetId}`);
             });
         });
         
         // Cargar productos
         async function loadProducts() {
             const loading = showLoading();
+            updateDebugInfo('Cargando productos...');
             
             try {
                 const { data: productos, error } = await supabase
@@ -731,6 +796,8 @@
                     .order('id', { ascending: false });
                 
                 if (error) throw error;
+                
+                updateDebugInfo(`Productos cargados: ${productos.length}`);
                 
                 // Actualizar contador
                 totalProducts.textContent = productos.length;
@@ -770,6 +837,7 @@
                 initProductEvents();
                 
             } catch (error) {
+                updateDebugInfo(`Error cargando productos: ${error.message}`);
                 console.error("Error cargando productos:", error);
                 productsAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Error cargando productos: ${error.message}
@@ -784,6 +852,7 @@
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const productId = btn.getAttribute('data-id');
+                    updateDebugInfo(`Editando producto ID: ${productId}`);
                     editProduct(productId);
                 });
             });
@@ -791,6 +860,7 @@
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const productId = btn.getAttribute('data-id');
+                    updateDebugInfo(`Eliminando producto ID: ${productId}`);
                     deleteProduct(productId);
                 });
             });
@@ -799,6 +869,7 @@
         // Agregar nuevo producto
         productForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            updateDebugInfo('Agregando nuevo producto...');
             
             const name = document.getElementById('product-name').value.trim();
             const description = document.getElementById('product-description').value.trim();
@@ -809,6 +880,7 @@
             
             // Validación de campos
             if (!name || !description || !imageUrl) {
+                updateDebugInfo('Validación fallida: campos vacíos');
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Todos los campos son obligatorios
                 </div>`;
@@ -816,6 +888,7 @@
             }
             
             if (isNaN(price) || price <= 0) {
+                updateDebugInfo('Validación fallida: precio inválido');
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Precio inválido
                 </div>`;
@@ -823,6 +896,7 @@
             }
             
             if (isNaN(age) || age < 0 || age > 12) {
+                updateDebugInfo('Validación fallida: edad inválida');
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Edad debe ser entre 0-12 meses
                 </div>`;
@@ -830,6 +904,7 @@
             }
             
             if (!['ropa', 'pañalera'].includes(category)) {
+                updateDebugInfo('Validación fallida: categoría inválida');
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Categoría inválida (solo: ropa, pañalera)
                 </div>`;
@@ -848,12 +923,15 @@
                     imagen_url: imageUrl
                 };
                 
+                updateDebugInfo(`Enviando datos: ${JSON.stringify(productData)}`);
+                
                 const { data, error } = await supabase
                     .from('productos')
                     .insert([productData]);
                 
                 if (error) throw error;
                 
+                updateDebugInfo('Producto agregado exitosamente');
                 addProductAlert.innerHTML = `<div class="alert alert-success">
                     <i class="fas fa-check-circle"></i> Producto agregado exitosamente!
                 </div>`;
@@ -865,6 +943,7 @@
                 await loadProducts();
                 
             } catch (error) {
+                updateDebugInfo(`Error agregando producto: ${error.message}`);
                 console.error("Error agregando producto:", error);
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Error al agregar producto: ${error.message}
@@ -882,6 +961,7 @@
         // Editar producto
         async function editProduct(id) {
             const loading = showLoading();
+            updateDebugInfo(`Cargando producto para edición ID: ${id}`);
             
             try {
                 // Obtener datos del producto
@@ -892,6 +972,8 @@
                     .single();
                 
                 if (error) throw error;
+                
+                updateDebugInfo(`Producto cargado: ${producto.nombre}`);
                 
                 // Llenar formulario con datos del producto
                 document.getElementById('product-name').value = producto.nombre;
@@ -920,6 +1002,7 @@
                 // Cambiar el evento de submit para actualizar
                 productForm.onsubmit = async (e) => {
                     e.preventDefault();
+                    updateDebugInfo(`Actualizando producto ID: ${id}`);
                     
                     const name = document.getElementById('product-name').value.trim();
                     const description = document.getElementById('product-description').value.trim();
@@ -930,6 +1013,7 @@
                     
                     // Validación de campos (igual que en agregar)
                     if (!name || !description || !imageUrl) {
+                        updateDebugInfo('Validación fallida: campos vacíos');
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Todos los campos son obligatorios
                         </div>`;
@@ -937,6 +1021,7 @@
                     }
                     
                     if (isNaN(price) || price <= 0) {
+                        updateDebugInfo('Validación fallida: precio inválido');
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Precio inválido
                         </div>`;
@@ -944,6 +1029,7 @@
                     }
                     
                     if (isNaN(age) || age < 0 || age > 12) {
+                        updateDebugInfo('Validación fallida: edad inválida');
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Edad debe ser entre 0-12 meses
                         </div>`;
@@ -951,6 +1037,7 @@
                     }
                     
                     if (!['ropa', 'pañalera'].includes(category)) {
+                        updateDebugInfo('Validación fallida: categoría inválida');
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Categoría inválida (solo: ropa, pañalera)
                         </div>`;
@@ -969,6 +1056,8 @@
                             imagen_url: imageUrl
                         };
                         
+                        updateDebugInfo(`Actualizando con datos: ${JSON.stringify(productData)}`);
+                        
                         const { error } = await supabase
                             .from('productos')
                             .update(productData)
@@ -976,9 +1065,10 @@
                         
                         if (error) throw error;
                         
+                        updateDebugInfo('Producto actualizado exitosamente');
                         addProductAlert.innerHTML = `<div class="alert alert-success">
                             <i class="fas fa-check-circle"></i> Producto actualizado exitosamente!
-                        </div>';
+                        </div>`;
                         
                         // Restaurar formulario a estado normal
                         submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
@@ -990,6 +1080,7 @@
                         await loadProducts();
                         
                     } catch (error) {
+                        updateDebugInfo(`Error actualizando producto: ${error.message}`);
                         console.error("Error actualizando producto:", error);
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Error al actualizar producto: ${error.message}
@@ -1008,6 +1099,7 @@
                 productForm.originalSubmit = productForm.onsubmit;
                 
             } catch (error) {
+                updateDebugInfo(`Error obteniendo producto: ${error.message}`);
                 console.error("Error obteniendo producto:", error);
                 addProductAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Error al cargar producto: ${error.message}
@@ -1020,10 +1112,12 @@
         // Eliminar producto
         async function deleteProduct(id) {
             if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+                updateDebugInfo('Eliminación cancelada por el usuario');
                 return;
             }
             
             const loading = showLoading();
+            updateDebugInfo(`Eliminando producto ID: ${id}`);
             
             try {
                 const { error } = await supabase
@@ -1033,6 +1127,7 @@
                 
                 if (error) throw error;
                 
+                updateDebugInfo('Producto eliminado exitosamente');
                 productsAlert.innerHTML = `<div class="alert alert-success">
                     <i class="fas fa-check-circle"></i> Producto eliminado exitosamente!
                 </div>`;
@@ -1041,6 +1136,7 @@
                 await loadProducts();
                 
             } catch (error) {
+                updateDebugInfo(`Error eliminando producto: ${error.message}`);
                 console.error("Error eliminando producto:", error);
                 productsAlert.innerHTML = `<div class="alert alert-error">
                     <i class="fas fa-exclamation-circle"></i> Error al eliminar producto: ${error.message}
@@ -1063,6 +1159,8 @@
         fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+            
+            updateDebugInfo('Subiendo imagen...');
             
             // Mostrar mensaje de carga
             const loadingMessage = document.createElement('div');
@@ -1102,6 +1200,7 @@
                 
                 // Copiar URL al portapapeles
                 navigator.clipboard.writeText(imageUrl);
+                updateDebugInfo(`URL de imagen copiada: ${imageUrl}`);
                 
                 // Mostrar notificación
                 alert(`URL de la imagen copiada al portapapeles: ${imageUrl}\n\nPuedes pegarla en el campo de imagen de producto.`);
@@ -1130,6 +1229,7 @@
                 fileInput.files = e.dataTransfer.files;
                 const event = new Event('change', { bubbles: true });
                 fileInput.dispatchEvent(event);
+                updateDebugInfo('Imagen arrastrada y soltada');
             }
         });
     </script>
