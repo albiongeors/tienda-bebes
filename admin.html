@@ -490,7 +490,6 @@
                                     <option value="">Seleccionar categoría</option>
                                     <option value="ropa">Ropa</option>
                                     <option value="pañalera">Pañalera</option>
-                                    <option value="accesorios">Accesorios</option>
                                 </select>
                             </div>
                             
@@ -830,6 +829,13 @@
                 return;
             }
             
+            if (!['ropa', 'pañalera'].includes(category)) {
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> Categoría inválida (solo: ropa, pañalera)
+                </div>`;
+                return;
+            }
+            
             const loading = showLoading();
             
             try {
@@ -940,6 +946,13 @@
                     if (isNaN(age) || age < 0 || age > 12) {
                         addProductAlert.innerHTML = `<div class="alert alert-error">
                             <i class="fas fa-exclamation-circle"></i> Edad debe ser entre 0-12 meses
+                        </div>`;
+                        return;
+                    }
+                    
+                    if (!['ropa', 'pañalera'].includes(category)) {
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> Categoría inválida (solo: ropa, pañalera)
                         </div>`;
                         return;
                     }
