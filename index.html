@@ -32,6 +32,18 @@
             overflow-x: hidden;
         }
         
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        
+        /* Header y navegación */
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             padding: 1rem 5%;
@@ -82,8 +94,9 @@
             font-size: 1.1rem;
         }
         
-        nav a:hover {
+        nav a:hover, nav a:focus {
             background: rgba(255, 255, 255, 0.2);
+            outline: none;
         }
         
         nav a::after {
@@ -98,7 +111,7 @@
             transition: width 0.3s ease;
         }
         
-        nav a:hover::after {
+        nav a:hover::after, nav a:focus::after {
             width: 100%;
         }
         
@@ -108,10 +121,13 @@
             color: white;
             cursor: pointer;
             transition: transform 0.3s ease;
+            background: none;
+            border: none;
         }
         
-        .cart-icon:hover {
+        .cart-icon:hover, .cart-icon:focus {
             transform: scale(1.1);
+            outline: none;
         }
         
         .cart-count {
@@ -139,16 +155,18 @@
             transition: all 0.3s ease;
         }
         
-        .admin-link:hover {
+        .admin-link:hover, .admin-link:focus {
             background: var(--accent);
             color: var(--dark);
         }
         
+        /* Hero section */
         .hero {
             background: linear-gradient(rgba(58, 64, 90, 0.7), rgba(58, 64, 90, 0.7)), url('https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             height: 80vh;
+            min-height: 500px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -223,16 +241,18 @@
             transition: all 0.6s ease;
         }
         
-        .btn:hover {
+        .btn:hover, .btn:focus {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             background: #ffc757;
+            outline: none;
         }
         
         .btn:hover::after {
             left: 120%;
         }
         
+        /* Oferta especial */
         .special-offer {
             background: linear-gradient(135deg, var(--highlight), var(--primary));
             color: white;
@@ -243,6 +263,7 @@
             animation: pulseBg 3s infinite;
         }
         
+        /* Categorías */
         .categories {
             padding: 4rem 5%;
             background: white;
@@ -288,7 +309,7 @@
             position: relative;
         }
         
-        .category-card:hover {
+        .category-card:hover, .category-card:focus-within {
             transform: translateY(-15px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
@@ -321,6 +342,7 @@
             opacity: 0.9;
         }
         
+        /* Productos con paginación */
         .products {
             padding: 5rem 5%;
             background: linear-gradient(to bottom, #FFF9F5, #f0f7fa);
@@ -343,6 +365,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2.5rem;
+            margin-bottom: 2rem;
         }
         
         .product-card {
@@ -354,7 +377,7 @@
             position: relative;
         }
         
-        .product-card:hover {
+        .product-card:hover, .product-card:focus-within {
             transform: translateY(-10px);
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
@@ -377,6 +400,8 @@
             background-size: cover;
             background-position: center;
             transition: transform 0.5s ease;
+            width: 100%;
+            object-fit: cover;
         }
         
         .product-card:hover .product-img {
@@ -432,9 +457,10 @@
             justify-content: center;
         }
         
-        .add-to-cart:hover {
+        .add-to-cart:hover, .add-to-cart:focus {
             background: #ff5a7f;
             transform: scale(1.05);
+            outline: none;
         }
         
         .view-details {
@@ -449,12 +475,82 @@
             flex: 1;
         }
         
-        .view-details:hover {
+        .view-details:hover, .view-details:focus {
             background: #f0f0f0;
             border-color: var(--primary);
             color: var(--primary);
+            outline: none;
         }
         
+        /* Favoritos */
+        .favorite-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 1.2rem;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .favorite-btn:hover, .favorite-btn:focus {
+            color: var(--primary);
+            outline: none;
+        }
+        
+        .favorite-btn.active {
+            color: var(--primary);
+        }
+        
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .page-btn:hover, .page-btn:focus {
+            background: #6fc1d8;
+            transform: scale(1.1);
+            outline: none;
+        }
+        
+        .page-btn.active {
+            background: var(--primary);
+        }
+        
+        .page-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Sobre nosotros */
         .about {
             padding: 6rem 5%;
             background: white;
@@ -513,6 +609,7 @@
             font-size: 1.1rem;
         }
         
+        /* Testimonios */
         .testimonials {
             padding: 5rem 5%;
             background: linear-gradient(to bottom, #f0f7fa, #FFF9F5);
@@ -535,7 +632,7 @@
             position: relative;
         }
         
-        .testimonial-card:hover {
+        .testimonial-card:hover, .testimonial-card:focus-within {
             transform: translateY(-10px);
         }
         
@@ -582,6 +679,63 @@
             font-size: 0.9rem;
         }
         
+        /* Contacto */
+        .contact-section {
+            padding: 5rem 5%;
+            background: white;
+            text-align: center;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .contact-item {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover, .contact-item:focus-within {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .contact-item i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .contact-item p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .contact-item a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item a:hover, .contact-item a:focus {
+            color: var(--secondary);
+            text-decoration: underline;
+            outline: none;
+        }
+        
+        /* Newsletter */
         .newsletter {
             padding: 4rem 5%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -616,6 +770,10 @@
             font-size: 1rem;
         }
         
+        .newsletter-form input:focus {
+            outline: 2px solid var(--accent);
+        }
+        
         .newsletter-form button {
             background: var(--accent);
             color: var(--dark);
@@ -627,11 +785,13 @@
             transition: all 0.3s ease;
         }
         
-        .newsletter-form button:hover {
+        .newsletter-form button:hover, .newsletter-form button:focus {
             background: #ffc757;
             transform: scale(1.05);
+            outline: none;
         }
         
+        /* Footer */
         footer {
             background: var(--dark);
             color: white;
@@ -681,9 +841,10 @@
             transition: all 0.3s ease;
         }
         
-        .footer-column a:hover {
+        .footer-column a:hover, .footer-column a:focus {
             color: var(--primary);
             transform: translateX(5px);
+            outline: none;
         }
         
         .social-icons {
@@ -704,9 +865,10 @@
             font-size: 1.2rem;
         }
         
-        .social-icons a:hover {
+        .social-icons a:hover, .social-icons a:focus {
             background: var(--primary);
             transform: translateY(-5px);
+            outline: none;
         }
         
         .copyright {
@@ -741,10 +903,12 @@
             font-size: 1.5rem;
             transition: all 0.3s ease;
             transform: translateX(30px);
+            text-decoration: none;
         }
         
-        .social-icon:hover {
+        .social-icon:hover, .social-icon:focus {
             transform: translateX(0);
+            outline: none;
         }
         
         .facebook-bg {
@@ -798,9 +962,35 @@
             border-radius: 5px;
         }
         
-        .contact-card a:hover {
+        .contact-card a:hover, .contact-card a:focus {
             background: rgba(255, 255, 255, 0.1);
             color: white;
+            outline: none;
+        }
+        
+        /* Badge flotante de WhatsApp */
+        .floating-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 99;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .floating-badge:focus {
+            outline: 2px solid var(--accent);
         }
         
         /* Animaciones */
@@ -843,7 +1033,17 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Responsive */
+        /* Responsividad mejorada */
+        @media (max-width: 1200px) {
+            .hero h2 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.6rem;
+            }
+        }
+        
         @media (max-width: 992px) {
             .about {
                 flex-direction: column;
@@ -856,6 +1056,14 @@
             
             .social-media-bar {
                 display: none;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.4rem;
             }
         }
         
@@ -872,14 +1080,6 @@
                 gap: 1rem;
             }
             
-            .hero h2 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.4rem;
-            }
-            
             .newsletter-form {
                 flex-direction: column;
             }
@@ -887,95 +1087,89 @@
             .contact-info {
                 flex-direction: column;
             }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+            
+            .add-to-cart, .view-details {
+                width: 100%;
+            }
+            
+            .hero {
+                height: 70vh;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
         }
         
-        .floating-badge {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero {
+                height: 60vh;
+            }
+            
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .pagination {
+                gap: 0.5rem;
+            }
+            
+            .page-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Mejoras de accesibilidad */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
             background: var(--primary);
             color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.8rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 99;
-            animation: pulse 2s infinite;
-            cursor: pointer;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
         }
         
-        .contact-section {
-            padding: 5rem 5%;
-            background: white;
-            text-align: center;
-        }
-        
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .contact-item {
-            background: #f9f9f9;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .contact-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .contact-item i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-        
-        .contact-item h3 {
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-        
-        .contact-item p {
-            margin-bottom: 1rem;
-            color: #666;
-        }
-        
-        .contact-item a {
-            color: var(--primary);
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .contact-item a:hover {
-            color: var(--secondary);
-            text-decoration: underline;
+        .skip-link:focus {
+            top: 0;
         }
     </style>
 </head>
 <body>
+    <!-- Enlace para saltar navegación (accesibilidad) -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
     <!-- Barra de redes sociales flotante -->
     <div class="social-media-bar">
-        <a href="https://www.facebook.com/profile.php?id=61579349372708" class="social-icon facebook-bg" target="_blank">
+        <a href="https://www.facebook.com/profile.php?id=61579349372708" class="social-icon facebook-bg" target="_blank" aria-label="Facebook">
             <i class="fab fa-facebook-f"></i>
         </a>
-        <a href="https://www.instagram.com/pequethobias/" class="social-icon instagram-bg" target="_blank">
+        <a href="https://www.instagram.com/pequethobias/" class="social-icon instagram-bg" target="_blank" aria-label="Instagram">
             <i class="fab fa-instagram"></i>
         </a>
-        <a href="https://www.tiktok.com/@pequethobias" class="social-icon tiktok-bg" target="_blank">
+        <a href="https://www.tiktok.com/@pequethobias" class="social-icon tiktok-bg" target="_blank" aria-label="TikTok">
             <i class="fab fa-tiktok"></i>
         </a>
-        <a href="https://wa.me/584127430912" class="social-icon whatsapp-bg" target="_blank">
+        <a href="https://wa.me/584127430912" class="social-icon whatsapp-bg" target="_blank" aria-label="WhatsApp">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
@@ -983,7 +1177,7 @@
     <!-- Header con navegación -->
     <header>
         <div class="logo">
-            <i class="fas fa-baby"></i>
+            <i class="fas fa-baby" aria-hidden="true"></i>
             <h1>PEQUETHOBIAS</h1>
         </div>
         <nav>
@@ -994,14 +1188,14 @@
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="admin.html" class="admin-link">
-                    <i class="fas fa-lock"></i> Admin
+                    <i class="fas fa-lock" aria-hidden="true"></i> Admin
                 </a></li>
             </ul>
         </nav>
-        <div class="cart-icon">
-            <i class="fas fa-shopping-cart"></i>
+        <button class="cart-icon" aria-label="Carrito de compras">
+            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
             <span class="cart-count">0</span>
-        </div>
+        </button>
     </header>
 
     <!-- Oferta especial -->
@@ -1023,7 +1217,7 @@
         <h2 class="section-title">Nuestras Categorías</h2>
         <div class="categories-grid">
             <div class="category-card">
-                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1591348131719-8c1a7b8f2b86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1591348131719-8c1a7b8f2b86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Ropa para recién nacidos">
                     <div class="category-overlay">
                         <div class="category-info">
                             <h3>Ropa para Recién Nacidos</h3>
@@ -1033,7 +1227,7 @@
                 </div>
             </div>
             <div class="category-card">
-                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1590005024862-6b67679a29fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1590005024862-6b67679a29fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Pañaleras">
                     <div class="category-overlay">
                         <div class="category-info">
                             <h3>Pañaleras</h3>
@@ -1043,7 +1237,7 @@
                 </div>
             </div>
             <div class="category-card">
-                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1576201830636-9034d8d3983c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1576201830636-9034d8d3983c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Accesorios">
                     <div class="category-overlay">
                         <div class="category-info">
                             <h3>Accesorios</h3>
@@ -1055,17 +1249,29 @@
         </div>
     </section>
 
-    <!-- Productos -->
+    <!-- Productos con paginación -->
     <section class="products" id="productos">
         <h2 class="section-title">Productos Destacados</h2>
         <div class="products-grid" id="productos-container">
             <!-- Los productos se cargarán aquí con JavaScript -->
         </div>
+        <!-- Controles de paginación -->
+        <div class="pagination" id="pagination-controls">
+            <button class="page-btn prev-btn" disabled aria-label="Página anterior">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn next-btn" aria-label="Página siguiente">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     </section>
 
     <!-- Sobre Nosotros -->
     <section class="about" id="nosotros">
-        <div class="about-img" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');"></div>
+        <div class="about-img" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');" role="img" aria-label="Sobre PEQUETHOBIAS"></div>
         <div class="about-content">
             <h2>Sobre PEQUETHOBIAS</h2>
             <p>En PEQUETHOBIAS nos dedicamos a ofrecer productos de la más alta calidad para los más pequeños. Cada prenda y accesorio ha sido cuidadosamente seleccionado pensando en la comodidad, seguridad y bienestar de tu bebé.</p>
@@ -1084,7 +1290,7 @@
                     "La calidad de las prendas es excepcional. Mi bebé está siempre cómodo y las prendas resisten perfectamente los lavados. ¡Recomendado 100%!"
                 </div>
                 <div class="testimonial-author">
-                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/32.jpg');"></div>
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/32.jpg');" role="img" aria-label="María López"></div>
                     <div class="author-info">
                         <h4>María López</h4>
                         <p>Madre de gemelos</p>
@@ -1096,7 +1302,7 @@
                     "La pañalera que compré es práctica, espaciosa y con un diseño precioso. Ahora salir con mi bebé es mucho más fácil y organizado."
                 </div>
                 <div class="testimonial-author">
-                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');" role="img" aria-label="Ana Martínez"></div>
                     <div class="author-info">
                         <h4>Ana Martínez</h4>
                         <p>Mamá primeriza</p>
@@ -1108,7 +1314,7 @@
                     "Excelente atención al cliente y productos de primera calidad. Cada compra ha sido una experiencia maravillosa. ¡Volveré a comprar sin duda!"
                 </div>
                 <div class="testimonial-author">
-                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');"></div>
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');" role="img" aria-label="Laura González"></div>
                     <div class="author-info">
                         <h4>Laura González</h4>
                         <p>Clienta frecuente</p>
@@ -1125,28 +1331,28 @@
         
         <div class="contact-grid">
             <div class="contact-item">
-                <i class="fab fa-facebook-messenger"></i>
+                <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
                 <h3>Facebook</h3>
                 <p>Síguenos para ver nuestras novedades</p>
                 <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
             </div>
             
             <div class="contact-item">
-                <i class="fab fa-instagram"></i>
+                <i class="fab fa-instagram" aria-hidden="true"></i>
                 <h3>Instagram</h3>
                 <p>Descubre nuestros productos en imágenes</p>
                 <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
             </div>
             
             <div class="contact-item">
-                <i class="fab fa-tiktok"></i>
+                <i class="fab fa-tiktok" aria-hidden="true"></i>
                 <h3>TikTok</h3>
                 <p>Mira nuestros videos y consejos</p>
                 <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
             </div>
             
             <div class="contact-item">
-                <i class="fab fa-whatsapp"></i>
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
                 <h3>WhatsApp</h3>
                 <p>Chatea directamente con nosotros</p>
                 <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
@@ -1154,14 +1360,15 @@
         </div>
     </section>
 
-    <!-- Newsletter -->
-    <section class="newsletter">
+    <!-- Newsletter con suscripción real -->
+    <section class="newsletter" id="newsletter">
         <h2>Únete a nuestra comunidad</h2>
         <p>Recibe ofertas exclusivas, novedades y consejos para el cuidado de tu bebé</p>
-        <form class="newsletter-form">
-            <input type="email" placeholder="Tu correo electrónico" required>
+        <form class="newsletter-form" id="newsletter-form">
+            <input type="email" id="newsletter-email" placeholder="Tu correo electrónico" required aria-label="Correo electrónico para newsletter">
             <button type="submit">Suscribirme</button>
         </form>
+        <p id="newsletter-message" style="margin-top: 1rem; display: none;"></p>
     </section>
 
     <!-- Footer -->
@@ -1171,42 +1378,42 @@
                 <h3>PEQUETHOBIAS</h3>
                 <p>Tu tienda especializada en productos premium para bebés de 0 a 12 meses. Calidad, seguridad y estilo para los más pequeños.</p>
                 <div class="social-icons">
-                    <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/pequethobias/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@pequethobias" target="_blank"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/584127430912" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/pequethobias/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@pequethobias" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/584127430912" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
             <div class="footer-column">
                 <h3>Enlaces Rápidos</h3>
                 <ul>
-                    <li><i class="fas fa-chevron-right"></i><a href="#inicio">Inicio</a></li>
-                    <li><i class="fas fa-chevron-right"></i><a href="#categorias">Categorías</a></li>
-                    <li><i class="fas fa-chevron-right"></i><a href="#productos">Productos</a></li>
-                    <li><i class="fas fa-chevron-right"></i><a href="#nosotros">Sobre Nosotros</a></li>
-                    <li><i class="fas fa-chevron-right"></i><a href="admin.html">Panel Admin</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#inicio">Inicio</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#categorias">Categorías</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#productos">Productos</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#nosotros">Sobre Nosotros</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="admin.html">Panel Admin</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Contacto</h3>
                 <div class="contact-info">
                     <div class="contact-card">
-                        <i class="fab fa-facebook-messenger"></i>
+                        <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
                         <h4>Facebook</h4>
                         <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
                     </div>
                     <div class="contact-card">
-                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
                         <h4>Instagram</h4>
                         <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
                     </div>
                     <div class="contact-card">
-                        <i class="fab fa-tiktok"></i>
+                        <i class="fab fa-tiktok" aria-hidden="true"></i>
                         <h4>TikTok</h4>
                         <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
                     </div>
                     <div class="contact-card">
-                        <i class="fab fa-whatsapp"></i>
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i>
                         <h4>WhatsApp</h4>
                         <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
                     </div>
@@ -1219,9 +1426,9 @@
     </footer>
 
     <!-- Badge flotante de WhatsApp -->
-    <div class="floating-badge" onclick="window.open('https://wa.me/584127430912', '_blank')">
+    <button class="floating-badge" onclick="window.open('https://wa.me/584127430912', '_blank')" aria-label="Contactar por WhatsApp">
         <i class="fab fa-whatsapp"></i>
-    </div>
+    </button>
 
     <script>
         // Configuración de Supabase
@@ -1231,32 +1438,59 @@
         // Inicializar Supabase
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Función para cargar productos
-        async function loadProducts() {
-            const { data: productos, error } = await supabase
-                .from('productos')
-                .select('*')
-                .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
+        // Variables globales
+        let cart = [];
+        let currentPage = 1;
+        const productsPerPage = 8;
+        let allProducts = [];
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        // Función para cargar productos con paginación
+        async function loadProducts(page = 1) {
+            const loading = document.createElement('div');
+            loading.innerHTML = '<p>Cargando productos...</p>';
+            document.getElementById('productos-container').appendChild(loading);
             
-            if (error) {
-                console.error('Error cargando productos:', error);
-                // Cargar datos de ejemplo si hay error
-                loadSampleProducts();
-                return;
+            try {
+                const { data: productos, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
+                
+                if (error) {
+                    console.error('Error cargando productos:', error);
+                    loadSampleProducts(page);
+                    return;
+                }
+                
+                // Si no hay productos, cargar ejemplos
+                if (productos.length === 0) {
+                    loadSampleProducts(page);
+                    return;
+                }
+                
+                allProducts = productos;
+                displayProducts(page);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadSampleProducts(page);
             }
-            
-            // Si no hay productos, cargar ejemplos
-            if (productos.length === 0) {
-                loadSampleProducts();
-                return;
-            }
-            
+        }
+        
+        // Función para mostrar productos con paginación
+        function displayProducts(page) {
             const container = document.getElementById('productos-container');
             container.innerHTML = '';
             
-            productos.forEach(producto => {
+            const startIndex = (page - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = allProducts.slice(startIndex, endIndex);
+            
+            productsToShow.forEach(producto => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                productCard.tabIndex = 0; // Hacemos el card enfocable para accesibilidad
                 
                 let badge = '';
                 if (producto.categoria === 'ropa') {
@@ -1265,13 +1499,19 @@
                     badge = '<div class="product-badge" style="background: var(--secondary);">PAÑALERA</div>';
                 }
                 
-                // Añadir precio con descuento (20% menos) para hacerlo más atractivo
+                // Comprobar si es favorito
+                const isFavorite = favorites.includes(producto.id.toString());
+                
+                // Precio con descuento (20% menos)
                 const precioOriginal = parseFloat(producto.precio);
                 const precioDescuento = precioOriginal * 0.8;
                 
                 productCard.innerHTML = `
                     ${badge}
-                    <div class="product-img" style="background-image: url('${producto.imagen_url}')"></div>
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${producto.id}" aria-label="${isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
+                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                    <img class="product-img" src="${producto.imagen_url}" alt="${producto.nombre}" loading="lazy">
                     <div class="product-info">
                         <h3>${producto.nombre}</h3>
                         <p>${producto.descripcion}</p>
@@ -1292,14 +1532,71 @@
                 container.appendChild(productCard);
             });
             
-            // Agregar event listeners a los botones
+            // Actualizar controles de paginación
+            updatePaginationControls();
+            
+            // Agregar event listeners
             document.querySelectorAll('.add-to-cart').forEach(button => {
                 button.addEventListener('click', addToCart);
             });
+            
+            document.querySelectorAll('.favorite-btn').forEach(button => {
+                button.addEventListener('click', toggleFavorite);
+            });
+        }
+        
+        // Función para actualizar controles de paginación
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(allProducts.length / productsPerPage);
+            const paginationContainer = document.getElementById('pagination-controls');
+            paginationContainer.innerHTML = '';
+            
+            // Botón anterior
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn prev-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.setAttribute('aria-label', 'Página anterior');
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayProducts(currentPage);
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+            
+            // Botones de página
+            const startPage = Math.max(1, currentPage - 1);
+            const endPage = Math.min(totalPages, currentPage + 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    displayProducts(currentPage);
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
+            
+            // Botón siguiente
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn next-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.setAttribute('aria-label', 'Página siguiente');
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayProducts(currentPage);
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
         }
         
         // Función para cargar productos de ejemplo
-        function loadSampleProducts() {
+        function loadSampleProducts(page = 1) {
             const productos = [
                 {
                     id: 1,
@@ -1336,62 +1633,50 @@
                     categoria: "accesorios",
                     edad_max_meses: 12,
                     imagen_url: "https://images.unsplash.com/photo-1601924638867-2c4af4a3a08f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 5,
+                    nombre: "Manta de Algodón",
+                    descripcion: "Suave y cálida para mantener a tu bebé cómodo",
+                    precio: 34.99,
+                    categoria: "ropa",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1563341591-2eab74d8c1d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 6,
+                    nombre: "Gorro y Manoplas",
+                    descripcion: "Set para proteger a tu bebé del frío",
+                    precio: 19.99,
+                    categoria: "ropa",
+                    edad_max_meses: 6,
+                    imagen_url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 7,
+                    nombre: "Babero Absorbente",
+                    descripcion: "Ideal para la hora de comer, fácil de limpiar",
+                    precio: 9.99,
+                    categoria: "accesorios",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1615485925690-1d0ae5b8d7b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 8,
+                    nombre: "Saco Dormir",
+                    descripcion: "Para que tu bebé duerma seguro y cómodo",
+                    precio: 39.99,
+                    categoria: "ropa",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1584824374895-5f4b1a1b0b0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                 }
             ];
             
-            const container = document.getElementById('productos-container');
-            container.innerHTML = '';
-            
-            productos.forEach(producto => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                
-                let badge = '';
-                if (producto.categoria === 'ropa') {
-                    badge = '<div class="product-badge">ROPA</div>';
-                } else if (producto.categoria === 'pañalera') {
-                    badge = '<div class="product-badge" style="background: var(--secondary);">PAÑALERA</div>';
-                } else {
-                    badge = '<div class="product-badge" style="background: var(--success);">ACCESORIO</div>';
-                }
-                
-                // Añadir precio con descuento (20% menos)
-                const precioOriginal = parseFloat(producto.precio);
-                const precioDescuento = precioOriginal * 0.8;
-                
-                productCard.innerHTML = `
-                    ${badge}
-                    <div class="product-img" style="background-image: url('${producto.imagen_url}')"></div>
-                    <div class="product-info">
-                        <h3>${producto.nombre}</h3>
-                        <p>${producto.descripcion}</p>
-                        <div class="product-price">
-                            <span class="old-price">$${precioOriginal.toFixed(2)}</span>
-                            <span>$${precioDescuento.toFixed(2)}</span>
-                        </div>
-                        <p><small>Edad máxima: ${producto.edad_max_meses} meses</small></p>
-                        <div class="product-actions">
-                            <button class="add-to-cart" data-id="${producto.id}">
-                                <i class="fas fa-cart-plus"></i> Añadir
-                            </button>
-                            <button class="view-details">Ver detalles</button>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(productCard);
-            });
-            
-            // Agregar event listeners a los botones
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', addToCart);
-            });
+            allProducts = productos;
+            displayProducts(page);
         }
         
         // Carrito de compras
-        let cart = [];
-        const cartCount = document.querySelector('.cart-count');
-        
         function addToCart(e) {
             const productId = parseInt(e.target.closest('.add-to-cart').dataset.id);
             
@@ -1419,27 +1704,100 @@
         
         function updateCartCount() {
             const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems;
-            cartCount.style.transform = 'scale(1.2)';
+            document.querySelector('.cart-count').textContent = totalItems;
+            document.querySelector('.cart-count').style.transform = 'scale(1.2)';
             setTimeout(() => {
-                cartCount.style.transform = 'scale(1)';
+                document.querySelector('.cart-count').style.transform = 'scale(1)';
             }, 300);
         }
         
+        // Sistema de favoritos
+        function toggleFavorite(e) {
+            const button = e.target.closest('.favorite-btn');
+            const productId = button.dataset.id;
+            
+            if (favorites.includes(productId)) {
+                // Eliminar de favoritos
+                favorites = favorites.filter(id => id !== productId);
+                button.classList.remove('active');
+                button.innerHTML = '<i class="far fa-heart"></i>';
+                button.setAttribute('aria-label', 'Añadir a favoritos');
+            } else {
+                // Añadir a favoritos
+                favorites.push(productId);
+                button.classList.add('active');
+                button.innerHTML = '<i class="fas fa-heart"></i>';
+                button.setAttribute('aria-label', 'Quitar de favoritos');
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+        
         // Suscripción al newsletter
-        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const email = this.querySelector('input').value;
+            const emailInput = document.getElementById('newsletter-email');
+            const email = emailInput.value.trim();
+            const messageElement = document.getElementById('newsletter-message');
             
-            // Mostrar mensaje de éxito
-            this.innerHTML = '<p style="color:white;font-size:1.2rem;">¡Gracias por suscribirte! Pronto recibirás nuestras novedades.</p>';
+            // Validar email
+            if (!validateEmail(email)) {
+                messageElement.textContent = 'Por favor, introduce un correo electrónico válido.';
+                messageElement.style.color = 'white';
+                messageElement.style.backgroundColor = '#ff6b6b';
+                messageElement.style.display = 'block';
+                messageElement.style.padding = '10px';
+                messageElement.style.borderRadius = '5px';
+                return;
+            }
             
-            // Aquí iría el código para guardar el email en tu base de datos
+            try {
+                // Guardar en Supabase
+                const { data, error } = await supabase
+                    .from('suscriptores')
+                    .insert([{ email: email }]);
+                
+                if (error) throw error;
+                
+                // Mostrar mensaje de éxito
+                messageElement.textContent = '¡Gracias por suscribirte! Pronto recibirás nuestras novedades.';
+                messageElement.style.color = 'white';
+                messageElement.style.backgroundColor = '#51cf66';
+                messageElement.style.display = 'block';
+                messageElement.style.padding = '10px';
+                messageElement.style.borderRadius = '5px';
+                
+                // Limpiar formulario
+                emailInput.value = '';
+                
+            } catch (error) {
+                console.error('Error al suscribir:', error);
+                messageElement.textContent = 'Ocurrió un error. Por favor, intenta de nuevo más tarde.';
+                messageElement.style.color = 'white';
+                messageElement.style.backgroundColor = '#ff6b6b';
+                messageElement.style.display = 'block';
+                messageElement.style.padding = '10px';
+                messageElement.style.borderRadius = '5px';
+            }
         });
         
-        // Cargar productos cuando la página esté lista
-        document.addEventListener('DOMContentLoaded', loadProducts);
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Iniciar cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            
+            // Hacer que el logo sea enfocable
+            document.querySelector('.logo').setAttribute('tabindex', '0');
+            
+            // Añadir aria-labels a elementos importantes
+            document.querySelector('.floating-badge').setAttribute('aria-label', 'Contactar por WhatsApp');
+            document.querySelector('.cart-icon').setAttribute('aria-label', 'Carrito de compras');
+        });
     </script>
 </body>
 </html>
-
