@@ -458,6 +458,35 @@
         .copy-btn:hover {
             background: #ffc44d;
         }
+        
+        /* Nuevos estilos para previsualización de imagen */
+        .image-preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .url-validation {
+            margin-top: 5px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .url-valid {
+            color: #2e7d32;
+        }
+        
+        .url-invalid {
+            color: #c62828;
+        }
     </style>
 </head>
 <body>
@@ -556,6 +585,12 @@
                         <div class="form-group">
                             <label for="product-image">Imagen del Producto (URL)</label>
                             <input type="text" id="product-image" class="form-control" placeholder="https://..." required>
+                            <div class="url-validation" id="url-validation"></div>
+                            
+                            <div class="image-preview-container">
+                                <img id="image-preview" class="preview-image" src="" alt="Previsualización de imagen">
+                            </div>
+                            
                             <p style="margin-top: 5px; color: #777; font-size: 0.9rem;">
                                 <i class="fas fa-info-circle"></i> Puedes usar la Gestión de Imágenes para subir imágenes y obtener una URL
                             </p>
@@ -580,6 +615,10 @@
                     <h2 class="section-title"><i class="fas fa-tshirt"></i> Gestión de Productos</h2>
                     
                     <div id="products-alert"></div>
+                    
+                    <div class="form-group">
+                        <input type="text" id="product-search" class="form-control" placeholder="Buscar productos por nombre o descripción...">
+                    </div>
                     
                     <div class="product-list">
                         <table class="product-table">
@@ -689,6 +728,10 @@
         const imageUploadArea = document.getElementById('image-upload-area');
         const uploadProgress = document.getElementById('upload-progress');
         const progressBar = document.getElementById('progress-bar');
+        const productImageInput = document.getElementById('product-image');
+        const imagePreview = document.getElementById('image-preview');
+        const urlValidation = document.getElementById('url-validation');
+        const productSearch = document.getElementById('product-search');
         
         // Credenciales de administrador
         const ADMIN_CREDENTIALS = {
@@ -720,6 +763,32 @@
         // Ocultar carga
         function hideLoading(overlay) {
             if (overlay) overlay.remove();
+        }
+        
+        // Validar URL
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // Previsualizar imagen
+        function previewImage(url) {
+            if (isValidUrl(url)) {
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+                urlValidation.textContent = 'URL válida';
+                urlValidation.className = 'url-validation url-valid';
+                urlValidation.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+                urlValidation.textContent = 'URL inválida';
+                urlValidation.className = 'url-validation url-invalid';
+                urlValidation.style.display = 'block';
+            }
         }
         
         // Iniciar sesión
@@ -839,6 +908,39 @@
                 updateDebugInfo(`Navegando a: ${targetId}`);
             });
         });
+        
+        // Previsualización de imagen
+        productImageInput.addEventListener('blur', function() {
+            const url = this.value.trim();
+            if (url) {
+                previewImage(url);
+            } else {
+                imagePreview.style.display = 'none';
+                urlValidation.style.display = 'none';
+            }
+        });
+        
+        // Búsqueda de productos
+        productSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filterProducts(searchTerm);
+        });
+        
+        // Filtrar productos por término de búsqueda
+        function filterProducts(searchTerm) {
+            const rows = document.querySelectorAll('#products-list tr');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(2) strong').textContent.toLowerCase();
+                const description = row.querySelector('td:nth-child(2) small').textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
         
         // Cargar productos
         async function loadProducts() {
@@ -967,6 +1069,15 @@
                 return;
             }
             
+            // Validar URL de imagen
+            if (!isValidUrl(imageUrl)) {
+                updateDebugInfo('Validación fallida: URL de imagen inválida');
+                addProductAlert.innerHTML = `<div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i> URL de imagen inválida
+                </div>`;
+                return;
+            }
+            
             const loading = showLoading();
             
             try {
@@ -994,6 +1105,8 @@
                 
                 // Limpiar formulario
                 productForm.reset();
+                imagePreview.style.display = 'none';
+                urlValidation.style.display = 'none';
                 
                 // Actualizar lista de productos
                 await loadProducts();
@@ -1038,6 +1151,7 @@
                 document.getElementById('product-category').value = producto.categoria;
                 document.getElementById('product-age').value = producto.edad_max_meses;
                 document.getElementById('product-image').value = producto.imagen_url;
+                previewImage(producto.imagen_url);
                 
                 // Cambiar a la pestaña de agregar producto
                 document.querySelectorAll('.admin-nav a').forEach(a => {
@@ -1100,6 +1214,15 @@
                         return;
                     }
                     
+                    // Validar URL de imagen
+                    if (!isValidUrl(imageUrl)) {
+                        updateDebugInfo('Validación fallida: URL de imagen inválida');
+                        addProductAlert.innerHTML = `<div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> URL de imagen inválida
+                        </div>`;
+                        return;
+                    }
+                    
                     const updateLoading = showLoading();
                     
                     try {
@@ -1131,6 +1254,8 @@
                         delete submitBtn.dataset.id;
                         productForm.reset();
                         productForm.onsubmit = productForm.originalSubmit;
+                        imagePreview.style.display = 'none';
+                        urlValidation.style.display = 'none';
                         
                         // Actualizar lista de productos
                         await loadProducts();
@@ -1305,7 +1430,7 @@
                 // Agregar evento para copiar
                 urlContainer.querySelector('.copy-btn').addEventListener('click', () => {
                     navigator.clipboard.writeText(publicUrl);
-                    alert('URL copiada al portapapeles');
+                    alert('URL copiada al portapeles');
                 });
                 
                 uploadProgress.parentNode.insertBefore(urlContainer, uploadProgress.nextSibling);
@@ -1422,3 +1547,4 @@
     </script>
 </body>
 </html>
+
