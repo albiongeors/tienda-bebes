@@ -14,7 +14,6 @@
             --dark: #3A405A;
             --success: #A3D9B0;
             --highlight: #FF9EC0;
-            --admin-bg: #f8f9fc;
         }
         
         * {
@@ -43,7 +42,6 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            transition: all 0.3s ease;
         }
         
         .logo {
@@ -909,6 +907,60 @@
             animation: pulse 2s infinite;
             cursor: pointer;
         }
+        
+        .contact-section {
+            padding: 5rem 5%;
+            background: white;
+            text-align: center;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .contact-item {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .contact-item i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .contact-item p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .contact-item a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -1066,6 +1118,42 @@
         </div>
     </section>
 
+    <!-- Contacto -->
+    <section class="contact-section" id="contacto">
+        <h2 class="section-title">Contáctanos</h2>
+        <p>Estamos aquí para ayudarte en todo lo que necesites para tu bebé</p>
+        
+        <div class="contact-grid">
+            <div class="contact-item">
+                <i class="fab fa-facebook-messenger"></i>
+                <h3>Facebook</h3>
+                <p>Síguenos para ver nuestras novedades</p>
+                <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-instagram"></i>
+                <h3>Instagram</h3>
+                <p>Descubre nuestros productos en imágenes</p>
+                <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-tiktok"></i>
+                <h3>TikTok</h3>
+                <p>Mira nuestros videos y consejos</p>
+                <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-whatsapp"></i>
+                <h3>WhatsApp</h3>
+                <p>Chatea directamente con nosotros</p>
+                <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Newsletter -->
     <section class="newsletter">
         <h2>Únete a nuestra comunidad</h2>
@@ -1077,7 +1165,7 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contacto">
+    <footer>
         <div class="footer-content">
             <div class="footer-column">
                 <h3>PEQUETHOBIAS</h3>
@@ -1354,5 +1442,4 @@
     </script>
 </body>
 </html>
-
 
