@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PEQUETHOBIAS - Ropa y Pañaleras para Bebés</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/@supabase/supabase-js"></script>
     <style>
         :root {
             --primary: #FF6B8B;
@@ -787,6 +786,25 @@
             margin-bottom: 10px;
         }
         
+        .contact-card h4 {
+            margin-bottom: 10px;
+        }
+        
+        .contact-card a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .contact-card a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
         /* Animaciones */
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -905,7 +923,7 @@
         <a href="https://www.tiktok.com/@pequethobias" class="social-icon tiktok-bg" target="_blank">
             <i class="fab fa-tiktok"></i>
         </a>
-        <a href="https://wa.me/+584127430912" class="social-icon whatsapp-bg" target="_blank">
+        <a href="https://wa.me/584127430912" class="social-icon whatsapp-bg" target="_blank">
             <i class="fab fa-whatsapp"></i>
         </a>
     </div>
@@ -1065,10 +1083,10 @@
                 <h3>PEQUETHOBIAS</h3>
                 <p>Tu tienda especializada en productos premium para bebés de 0 a 12 meses. Calidad, seguridad y estilo para los más pequeños.</p>
                 <div class="social-icons">
-                    <a href="https://facebook.com/pequethobias" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://instagram.com/pequethobias_ok" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://tiktok.com/@pequethobias_tk" target="_blank"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/1234567890" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/pequethobias/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@pequethobias" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/584127430912" target="_blank"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
             <div class="footer-column">
@@ -1087,22 +1105,22 @@
                     <div class="contact-card">
                         <i class="fab fa-facebook-messenger"></i>
                         <h4>Facebook</h4>
-                        <p>https://www.facebook.com/profile.php?id=61579349372708</p>
+                        <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
                     </div>
                     <div class="contact-card">
                         <i class="fab fa-instagram"></i>
                         <h4>Instagram</h4>
-                        <p>https://www.instagram.com/pequethobias/</p>
+                        <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
                     </div>
                     <div class="contact-card">
                         <i class="fab fa-tiktok"></i>
                         <h4>TikTok</h4>
-                        <p>https://www.tiktok.com/@pequethobias</p>
+                        <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
                     </div>
                     <div class="contact-card">
                         <i class="fab fa-whatsapp"></i>
                         <h4>WhatsApp</h4>
-                        <p>+1 234 567 890</p>
+                        <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
                     </div>
                 </div>
             </div>
@@ -1113,7 +1131,7 @@
     </footer>
 
     <!-- Badge flotante de WhatsApp -->
-    <div class="floating-badge" onclick="window.open('https://wa.me/+584127430912', '_blank')">
+    <div class="floating-badge" onclick="window.open('https://wa.me/584127430912', '_blank')">
         <i class="fab fa-whatsapp"></i>
     </div>
 
@@ -1122,12 +1140,12 @@
         const SUPABASE_URL = 'https://sgpfgyoizwvlwnxdfczn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
         
-        // Inicializar Supabase con nombre diferente
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Inicializar Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         // Función para cargar productos
         async function loadProducts() {
-            const { data: productos, error } = await supabaseClient
+            const { data: productos, error } = await supabase
                 .from('productos')
                 .select('*')
                 .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
@@ -1336,6 +1354,5 @@
     </script>
 </body>
 </html>
-
 
 
