@@ -1356,6 +1356,47 @@
             margin-top: 1rem;
             color: #777;
         }
+
+        /* Efectos de carga */
+        .skeleton-loader {
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Mejoras de validación */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Mensajes de estado */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .success {
+            background-color: rgba(163, 217, 176, 0.3);
+            border: 1px solid var(--success);
+            color: #2e7d32;
+        }
+
+        .error {
+            background-color: rgba(255, 107, 139, 0.3);
+            border: 1px solid var(--primary);
+            color: #c62828;
+        }
     </style>
 </head>
 <body>
@@ -1471,6 +1512,10 @@
         
         <div class="products-grid" id="productos-container">
             <!-- Los productos se cargarán aquí con JavaScript -->
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
         </div>
         
         <!-- Controles de paginación -->
@@ -1590,7 +1635,7 @@
             <input type="email" id="newsletter-email" placeholder="Tu correo electrónico" required aria-label="Correo electrónico para newsletter">
             <button type="submit">Suscribirme</button>
         </form>
-        <p id="newsletter-message" style="margin-top: 1rem; display: none;"></p>
+        <div id="newsletter-message" class="status-message" style="display: none;"></div>
     </section>
 
     <!-- Footer -->
@@ -1693,18 +1738,32 @@
         let allProducts = [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentCategory = 'all';
+        let currentSearchTerm = '';
 
         // Función para cargar productos con paginación
         async function loadProducts(page = 1) {
             const loading = document.createElement('div');
             loading.innerHTML = '<p>Cargando productos...</p>';
+            document.getElementById('productos-container').innerHTML = '';
             document.getElementById('productos-container').appendChild(loading);
             
             try {
-                const { data: productos, error } = await supabase
+                let query = supabase
                     .from('productos')
                     .select('*')
                     .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
+                
+                // Aplicar filtro de categoría si es necesario
+                if (currentCategory !== 'all') {
+                    query = query.eq('categoria', currentCategory);
+                }
+                
+                // Aplicar búsqueda si existe
+                if (currentSearchTerm) {
+                    query = query.or(`nombre.ilike.%${currentSearchTerm}%,descripcion.ilike.%${currentSearchTerm}%`);
+                }
+                
+                const { data: productos, error } = await query;
                 
                 if (error) {
                     console.error('Error cargando productos:', error);
@@ -1735,6 +1794,11 @@
             const startIndex = (page - 1) * productsPerPage;
             const endIndex = startIndex + productsPerPage;
             const productsToShow = allProducts.slice(startIndex, endIndex);
+            
+            if (productsToShow.length === 0) {
+                container.innerHTML = '<p class="status-message">No se encontraron productos</p>';
+                return;
+            }
             
             productsToShow.forEach(producto => {
                 const productCard = document.createElement('div');
@@ -1963,6 +2027,12 @@
             setTimeout(() => {
                 button.innerHTML = '<i class="fas fa-cart-plus"></i> Añadir';
             }, 1500);
+            
+            // Trackeo de evento
+            trackEvent('add_to_cart', {
+                item_id: productId,
+                value: 1
+            });
         }
         
         function updateCartCount() {
@@ -1995,6 +2065,12 @@
             
             // Guardar en localStorage
             localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // Trackeo de evento
+            trackEvent('favorite_toggle', {
+                item_id: productId,
+                action: favorites.includes(productId) ? 'add' : 'remove'
+            });
         }
         
         // Suscripción al newsletter
@@ -2007,11 +2083,8 @@
             // Validar email
             if (!validateEmail(email)) {
                 messageElement.textContent = 'Por favor, introduce un correo electrónico válido.';
-                messageElement.style.color = 'white';
-                messageElement.style.backgroundColor = '#ff6b6b';
+                messageElement.className = 'status-message error';
                 messageElement.style.display = 'block';
-                messageElement.style.padding = '10px';
-                messageElement.style.borderRadius = '5px';
                 return;
             }
             
@@ -2025,11 +2098,13 @@
                 
                 // Mostrar mensaje de éxito
                 messageElement.textContent = '¡Gracias por suscribirte! Pronto recibirás nuestras novedades.';
-                messageElement.style.color = 'white';
-                messageElement.style.backgroundColor = '#51cf66';
+                messageElement.className = 'status-message success';
                 messageElement.style.display = 'block';
-                messageElement.style.padding = '10px';
-                messageElement.style.borderRadius = '5px';
+                
+                // Trackeo de evento
+                trackEvent('newsletter_signup', {
+                    email: email
+                });
                 
                 // Limpiar formulario
                 emailInput.value = '';
@@ -2037,11 +2112,8 @@
             } catch (error) {
                 console.error('Error al suscribir:', error);
                 messageElement.textContent = 'Ocurrió un error. Por favor, intenta de nuevo más tarde.';
-                messageElement.style.color = 'white';
-                messageElement.style.backgroundColor = '#ff6b6b';
+                messageElement.className = 'status-message error';
                 messageElement.style.display = 'block';
-                messageElement.style.padding = '10px';
-                messageElement.style.borderRadius = '5px';
             }
         });
         
@@ -2052,8 +2124,9 @@
         
         // Búsqueda de productos
         document.getElementById('search-input').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            filterProducts(searchTerm);
+            currentSearchTerm = this.value.trim().toLowerCase();
+            currentPage = 1;
+            loadProducts();
         });
         
         // Filtrado por categoría
@@ -2064,31 +2137,15 @@
                 this.classList.add('active');
                 
                 currentCategory = this.dataset.category;
-                filterProducts(document.getElementById('search-input').value.toLowerCase(), currentCategory);
+                currentPage = 1;
+                loadProducts();
+                
+                // Trackeo de evento
+                trackEvent('filter_products', {
+                    category: currentCategory
+                });
             });
         });
-        
-        function filterProducts(searchTerm = '', category = 'all') {
-            let filtered = allProducts;
-            
-            // Filtrar por categoría
-            if (category !== 'all') {
-                filtered = filtered.filter(product => product.categoria === category);
-            }
-            
-            // Filtrar por término de búsqueda
-            if (searchTerm) {
-                filtered = filtered.filter(product => 
-                    product.nombre.toLowerCase().includes(searchTerm) || 
-                    product.descripcion.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            // Actualizar los productos mostrados
-            allProducts = filtered;
-            currentPage = 1;
-            displayProducts(currentPage);
-        }
         
         // Funcionalidad del carrito
         const cartModal = document.getElementById('cart-modal');
@@ -2103,6 +2160,9 @@
         function openCart() {
             cartModal.classList.add('active');
             renderCartItems();
+            
+            // Trackeo de evento
+            trackEvent('view_cart');
         }
         
         function closeCart() {
@@ -2166,6 +2226,13 @@
                     }
                     renderCartItems();
                     updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('update_cart', {
+                        item_id: productId,
+                        action: 'decrease',
+                        quantity: item.quantity || 0
+                    });
                 });
             });
             
@@ -2176,6 +2243,13 @@
                     item.quantity++;
                     renderCartItems();
                     updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('update_cart', {
+                        item_id: productId,
+                        action: 'increase',
+                        quantity: item.quantity
+                    });
                 });
             });
             
@@ -2185,6 +2259,11 @@
                     cart = cart.filter(item => item.id !== productId);
                     renderCartItems();
                     updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('remove_from_cart', {
+                        item_id: productId
+                    });
                 });
             });
         }
@@ -2196,12 +2275,72 @@
                 return;
             }
             
-            // Aquí iría la lógica de pago
-            alert('¡Compra finalizada con éxito! Gracias por tu pedido.');
-            cart = [];
-            updateCartCount();
-            closeCart();
+            // Calcular total
+            const total = cart.reduce((sum, item) => {
+                const product = allProducts.find(p => p.id === item.id);
+                if (product) {
+                    const precio = parseFloat(product.precio) * 0.8;
+                    return sum + (precio * item.quantity);
+                }
+                return sum;
+            }, 0);
+            
+            // Crear pedido en Supabase
+            createOrder(total)
+                .then(orderId => {
+                    // Simulación de pago exitoso
+                    alert(`¡Compra #${orderId} finalizada con éxito! Gracias por tu pedido.`);
+                    
+                    // Trackeo de evento
+                    trackEvent('purchase', {
+                        transaction_id: orderId,
+                        value: total,
+                        items: cart.length
+                    });
+                    
+                    // Limpiar carrito
+                    cart = [];
+                    updateCartCount();
+                    closeCart();
+                })
+                .catch(error => {
+                    console.error('Error al crear pedido:', error);
+                    alert('Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo.');
+                });
         });
+        
+        // Crear pedido en Supabase
+        async function createOrder(total) {
+            // En un entorno real, esto debería manejarse en un backend seguro
+            const orderData = {
+                total: total,
+                items: cart.map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity
+                })),
+                status: 'pending'
+            };
+            
+            const { data, error } = await supabase
+                .from('pedidos')
+                .insert([orderData])
+                .select();
+            
+            if (error) throw error;
+            
+            return data[0].id;
+        }
+        
+        // Trackeo de eventos
+        function trackEvent(eventName, params = {}) {
+            // En un entorno real, esto se enviaría a Google Analytics
+            console.log(`Evento: ${eventName}`, params);
+            
+            // Simulación de envío a GA
+            if (typeof gtag === 'function') {
+                gtag('event', eventName, params);
+            }
+        }
         
         // Iniciar cuando el documento esté listo
         document.addEventListener('DOMContentLoaded', () => {
@@ -2213,8 +2352,14 @@
             // Añadir aria-labels a elementos importantes
             document.querySelector('.floating-badge').setAttribute('aria-label', 'Contactar por WhatsApp');
             document.querySelector('.cart-icon').setAttribute('aria-label', 'Carrito de compras');
+            
+            // Inicializar Google Analytics (simulado)
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-TUCODIGO');
+            }
         });
     </script>
 </body>
 </html>
+
 
