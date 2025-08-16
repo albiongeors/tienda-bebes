@@ -418,6 +418,46 @@
             z-index: 10000;
             max-width: 400px;
         }
+
+        /* Nuevos estilos para la gestión de imágenes */
+        .upload-progress {
+            margin-top: 10px;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .image-url {
+            margin-top: 10px;
+            padding: 8px;
+            background: #f8f9fc;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .copy-btn:hover {
+            background: #ffc44d;
+        }
     </style>
 </head>
 <body>
@@ -517,7 +557,7 @@
                             <label for="product-image">Imagen del Producto (URL)</label>
                             <input type="text" id="product-image" class="form-control" placeholder="https://..." required>
                             <p style="margin-top: 5px; color: #777; font-size: 0.9rem;">
-                                <i class="fas fa-info-circle"></i> Puedes usar servicios como <a href="https://imgbb.com/" target="_blank">imgBB</a> para subir imágenes y obtener una URL
+                                <i class="fas fa-info-circle"></i> Puedes usar la Gestión de Imágenes para subir imágenes y obtener una URL
                             </p>
                         </div>
                         
@@ -572,6 +612,9 @@
                             <p><small>Formatos soportados: JPG, PNG, GIF (Máx. 5MB)</small></p>
                         </div>
                         <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        <div class="upload-progress hidden" id="upload-progress">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
                     </div>
                     
                     <div>
@@ -621,12 +664,15 @@
     </div>
 
     <script>
-        // SOLUCIÓN: Cambiamos el nombre de la instancia para evitar conflicto
+        // Configuración de Supabase
         const SUPABASE_URL = 'https://sgpfgyoizwvlwnxdfczn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // 2. Luego declaramos las variables del DOM
+        
+        // Bucket de almacenamiento de imágenes
+        const STORAGE_BUCKET = 'product-images';
+        
+        // Variables del DOM
         const loginContainer = document.getElementById('login-container');
         const adminPanel = document.getElementById('admin-panel');
         const loginForm = document.getElementById('login-form');
@@ -641,6 +687,8 @@
         const imagesContainer = document.getElementById('images-container');
         const fileInput = document.getElementById('file-input');
         const imageUploadArea = document.getElementById('image-upload-area');
+        const uploadProgress = document.getElementById('upload-progress');
+        const progressBar = document.getElementById('progress-bar');
         
         // Credenciales de administrador
         const ADMIN_CREDENTIALS = {
@@ -723,6 +771,11 @@
                         
                         // Cargar productos
                         await loadProducts();
+                        
+                        // Cargar imágenes al mostrar la sección
+                        document.querySelector('.admin-nav a[href="#gestion-imagenes"]').addEventListener('click', async () => {
+                            await loadUploadedImages();
+                        });
                     } catch (error) {
                         updateDebugInfo(`Error en conexión Supabase: ${error.message}`);
                         loginErrorMessage.textContent = `Error de conexión con la base de datos: ${error.message}`;
@@ -776,6 +829,11 @@
                 // Cargar productos si es necesario
                 if (targetId === 'gestion-productos') {
                     loadProducts();
+                }
+                
+                // Cargar imágenes si es necesario
+                if (targetId === 'gestion-imagenes') {
+                    loadUploadedImages();
                 }
                 
                 updateDebugInfo(`Navegando a: ${targetId}`);
@@ -1158,53 +1216,184 @@
             const file = e.target.files[0];
             if (!file) return;
             
+            // Validar tamaño de archivo
+            if (file.size > 5 * 1024 * 1024) { // 5MB
+                alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB.');
+                return;
+            }
+            
+            // Validar tipo de archivo
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Formato de archivo no soportado. Por favor, sube un archivo JPG, PNG o GIF.');
+                return;
+            }
+            
             updateDebugInfo('Subiendo imagen...');
             
-            // Mostrar mensaje de carga
-            const loadingMessage = document.createElement('div');
-            loadingMessage.innerHTML = `<div class="alert alert-success">
-                <i class="fas fa-spinner fa-spin"></i> Subiendo imagen...
-            </div>`;
-            imageUploadArea.parentNode.insertBefore(loadingMessage, imageUploadArea.nextSibling);
+            // Mostrar barra de progreso
+            uploadProgress.classList.remove('hidden');
+            progressBar.style.width = '0%';
             
-            // Simulación de subida de imagen (en un caso real, usarías un servicio)
-            setTimeout(() => {
-                // URL de imagen de ejemplo (en producción se generaría una URL real)
-                const imageUrl = `https://picsum.photos/200/300?random=${Math.floor(Math.random() * 1000)}`;
+            try {
+                // Crear un nombre único para el archivo
+                const fileName = `product-${Date.now()}-${file.name}`;
+                const filePath = `${STORAGE_BUCKET}/${fileName}`;
+                
+                // Subir el archivo a Supabase Storage
+                const { data, error } = await supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        onProgress: (progress) => {
+                            const percentage = Math.round(progress.loaded / progress.total * 100);
+                            progressBar.style.width = `${percentage}%`;
+                        }
+                    });
+                
+                if (error) throw error;
+                
+                // Obtener URL pública de la imagen
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .getPublicUrl(filePath);
+                
+                updateDebugInfo(`Imagen subida: ${publicUrl}`);
                 
                 // Crear elemento de previsualización
                 const preview = document.createElement('div');
                 preview.className = 'image-preview';
-                preview.style.backgroundImage = `url('${imageUrl}')`;
-                preview.innerHTML = `<div class="delete-btn"><i class="fas fa-times"></i></div>`;
+                preview.style.backgroundImage = `url('${publicUrl}')`;
+                preview.innerHTML = `
+                    <div class="delete-btn" data-path="${filePath}">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
                 
                 // Agregar al contenedor
                 imagesContainer.appendChild(preview);
                 
-                // Eliminar mensaje de carga
-                loadingMessage.remove();
-                
-                // Mostrar mensaje de éxito
-                const successMessage = document.createElement('div');
-                successMessage.innerHTML = `<div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> Imagen subida exitosamente!
-                </div>`;
-                imageUploadArea.parentNode.insertBefore(successMessage, imageUploadArea.nextSibling);
-                
-                // Ocultar mensaje después de 3 segundos
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 3000);
+                // Agregar evento para eliminar la imagen
+                preview.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const path = e.target.closest('.delete-btn').dataset.path;
+                    if (confirm('¿Eliminar esta imagen permanentemente?')) {
+                        const { error } = await supabaseClient.storage
+                            .from(STORAGE_BUCKET)
+                            .remove([path]);
+                        if (error) {
+                            alert('Error eliminando la imagen: ' + error.message);
+                        } else {
+                            preview.remove();
+                        }
+                    }
+                });
                 
                 // Copiar URL al portapapeles
-                navigator.clipboard.writeText(imageUrl);
-                updateDebugInfo(`URL de imagen copiada: ${imageUrl}`);
+                navigator.clipboard.writeText(publicUrl);
                 
-                // Mostrar notificación
-                alert(`URL de la imagen copiada al portapapeles: ${imageUrl}\n\nPuedes pegarla en el campo de imagen de producto.`);
+                // Mostrar URL para el administrador
+                const urlContainer = document.createElement('div');
+                urlContainer.className = 'image-url';
+                urlContainer.innerHTML = `
+                    <p>URL de la imagen:</p>
+                    <div>${publicUrl}</div>
+                    <button class="copy-btn">Copiar URL</button>
+                `;
                 
-            }, 1500);
+                // Agregar evento para copiar
+                urlContainer.querySelector('.copy-btn').addEventListener('click', () => {
+                    navigator.clipboard.writeText(publicUrl);
+                    alert('URL copiada al portapapeles');
+                });
+                
+                uploadProgress.parentNode.insertBefore(urlContainer, uploadProgress.nextSibling);
+                
+                // Mostrar mensaje de éxito
+                alert('Imagen subida exitosamente. La URL ha sido copiada al portapapeles y puedes usarla en los productos.');
+                
+            } catch (error) {
+                console.error('Error subiendo imagen:', error);
+                alert('Error subiendo imagen: ' + error.message);
+            } finally {
+                // Ocultar barra de progreso
+                uploadProgress.classList.add('hidden');
+                fileInput.value = '';
+            }
         });
+        
+        // Cargar imágenes subidas
+        async function loadUploadedImages() {
+            const loading = showLoading();
+            try {
+                // Obtener lista de archivos en el bucket
+                const { data, error } = await supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .list();
+                
+                if (error) throw error;
+                
+                // Limpiar contenedor
+                imagesContainer.innerHTML = '';
+                
+                // Filtrar solo imágenes
+                const imageFiles = data.filter(file => 
+                    file.name.endsWith('.jpg') || 
+                    file.name.endsWith('.jpeg') || 
+                    file.name.endsWith('.png') || 
+                    file.name.endsWith('.gif')
+                );
+                
+                if (imageFiles.length === 0) {
+                    imagesContainer.innerHTML = '<p>No hay imágenes subidas aún.</p>';
+                    return;
+                }
+                
+                // Crear elementos de previsualización
+                imageFiles.forEach(file => {
+                    const filePath = `${STORAGE_BUCKET}/${file.name}`;
+                    
+                    // Obtener URL pública
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from(STORAGE_BUCKET)
+                        .getPublicUrl(filePath);
+                    
+                    const preview = document.createElement('div');
+                    preview.className = 'image-preview';
+                    preview.style.backgroundImage = `url('${publicUrl}')`;
+                    preview.innerHTML = `
+                        <div class="delete-btn" data-path="${filePath}">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    `;
+                    
+                    imagesContainer.appendChild(preview);
+                    
+                    // Agregar evento para eliminar la imagen
+                    preview.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const path = e.target.closest('.delete-btn').dataset.path;
+                        if (confirm('¿Eliminar esta imagen permanentemente?')) {
+                            const { error } = await supabaseClient.storage
+                                .from(STORAGE_BUCKET)
+                                .remove([path]);
+                            if (error) {
+                                alert('Error eliminando la imagen: ' + error.message);
+                            } else {
+                                preview.remove();
+                            }
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error cargando imágenes:', error);
+                alert('Error cargando imágenes: ' + error.message);
+            } finally {
+                hideLoading(loading);
+            }
+        }
         
         // Permitir arrastrar y soltar imágenes
         imageUploadArea.addEventListener('dragover', (e) => {
