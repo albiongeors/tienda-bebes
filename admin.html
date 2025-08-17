@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEQUETHOBIAS - Panel de Administración</title>
+    <title>PEQUETHOBIAS - Panel de Administración Mejorado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/@supabase/supabase-js"></script>
     <style>
+        /* Variables de colores mejoradas para contraste */
         :root {
             --primary: #E91E63;
             --secondary: #03A9F4;
@@ -36,7 +37,6 @@
             overflow-x: hidden;
         }
         
-        /* Estructura principal */
         .admin-header {
             background: linear-gradient(135deg, var(--dark), #1c2331);
             color: white;
@@ -139,106 +139,240 @@
             color: var(--secondary);
         }
         
-        /* Nuevos estilos para gestión de pagos */
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .payment-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
+        /* Mejoras en formularios */
+        .form-group {
+            margin-bottom: 1.5rem;
             position: relative;
-            background: white;
         }
         
-        .payment-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            border-color: var(--secondary);
-        }
-        
-        .payment-card.selected {
-            border: 2px solid var(--secondary);
-            background-color: rgba(3, 169, 244, 0.05);
-        }
-        
-        .payment-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-        
-        .payment-card h3 {
+        .form-group label {
+            display: block;
             margin-bottom: 0.5rem;
+            font-weight: 500;
             color: var(--dark);
         }
         
-        .payment-card p {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .payment-form {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            background: #fafafa;
-        }
-        
-        .payment-instructions {
-            background: #e3f2fd;
-            padding: 1rem;
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
         }
         
-        .payment-instructions ul {
-            padding-left: 1.5rem;
-            margin-top: 0.5rem;
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(3, 169, 244, 0.2);
         }
         
-        .payment-instructions li {
-            margin-bottom: 0.5rem;
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
         }
         
-        .proof-upload {
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            background: #039BE5;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: #D81B60;
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        
+        .btn-accent:hover {
+            background: #FFB300;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(3, 169, 244, 0.1);
+        }
+        
+        /* Mejoras en carga de imágenes */
+        .image-upload {
             border: 2px dashed #ddd;
             border-radius: 8px;
             padding: 2rem;
             text-align: center;
-            margin: 1.5rem 0;
             cursor: pointer;
-            background: #f8f9fc;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            background: #fafafa;
         }
         
-        .proof-upload i {
+        .image-upload:hover {
+            border-color: var(--secondary);
+            background: rgba(139, 211, 230, 0.05);
+        }
+        
+        .image-upload i {
             font-size: 3rem;
             color: var(--secondary);
             margin-bottom: 1rem;
         }
         
-        /* Tabla de pedidos mejorada */
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
+        .image-upload p {
+            color: #777;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .image-preview {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-preview:hover {
+            transform: scale(1.05);
+        }
+        
+        .image-preview .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(233, 30, 99, 0.9);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+        
+        .image-preview:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        /* Nuevos estilos para dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
             margin-top: 1.5rem;
         }
         
-        .orders-table th, .orders-table td {
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon.products {
+            background: rgba(3, 169, 244, 0.1);
+            color: var(--secondary);
+        }
+        
+        .stat-icon.orders {
+            background: rgba(233, 30, 99, 0.1);
+            color: var(--primary);
+        }
+        
+        .stat-icon.revenue {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--accent);
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card p {
+            color: #777;
+        }
+        
+        /* Mejoras en tablas */
+        .product-list {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #eee;
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        .product-table th, .product-table td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
         
-        .orders-table th {
+        .product-table th {
             background: #f8f9fc;
             font-weight: 600;
             color: var(--dark);
@@ -246,31 +380,17 @@
             top: 0;
         }
         
-        .orders-table tr:hover {
+        .product-table tr:hover {
             background: #f8f9fc;
         }
         
-        .order-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: inline-block;
-        }
-        
-        .status-pending {
-            background: #fff8e1;
-            color: #ff8f00;
-        }
-        
-        .status-verified {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .status-rejected {
-            background: #ffebee;
-            color: #c62828;
+        .product-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 5px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #eee;
         }
         
         .action-btn {
@@ -285,101 +405,58 @@
             font-size: 0.9rem;
         }
         
-        .verify-btn {
-            background: rgba(76, 175, 80, 0.1);
-            color: #2e7d32;
-        }
-        
-        .verify-btn:hover {
-            background: #4CAF50;
-            color: white;
-        }
-        
-        .reject-btn {
-            background: rgba(244, 67, 54, 0.1);
-            color: #c62828;
-        }
-        
-        .reject-btn:hover {
-            background: #F44336;
-            color: white;
-        }
-        
-        .view-proof {
+        .edit-btn {
             background: rgba(3, 169, 244, 0.1);
             color: var(--secondary);
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: inline-block;
-            font-size: 0.85rem;
         }
         
-        .view-proof:hover {
+        .edit-btn:hover {
             background: var(--secondary);
             color: white;
         }
         
-        /* Modal para ver comprobantes */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+        .delete-btn {
+            background: rgba(233, 30, 99, 0.1);
+            color: var(--primary);
+        }
+        
+        .delete-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Nuevos estilos para paginación */
+        .pagination {
             display: flex;
             justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .page-btn {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: 500;
             transition: all 0.3s ease;
         }
         
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
+        .page-btn:hover, .page-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
         }
         
-        .proof-modal {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal-overlay.active .proof-modal {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #777;
-        }
-        
-        .proof-image {
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            margin-top: 1rem;
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         /* Animaciones */
@@ -393,10 +470,68 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        
+        /* Mejoras responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+            }
+            
+            .admin-main {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Nuevo: Barra de progreso mejorada */
+        .upload-progress {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Nuevo: Selector de categorías mejorado */
+        .category-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .category-option {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .category-option:hover, .category-option.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
     </style>
 </head>
 <body>
-    <div id="admin-panel">
+    <!-- Panel de administración mejorado -->
+    <div id="admin-panel" class="hidden">
         <header class="admin-header">
             <div class="admin-logo">
                 <i class="fas fa-baby"></i>
@@ -417,59 +552,159 @@
                         <li><a href="#agregar-producto"><i class="fas fa-plus-circle"></i> Agregar Producto</a></li>
                         <li><a href="#gestion-productos"><i class="fas fa-tshirt"></i> Gestionar Productos</a></li>
                         <li><a href="#gestion-imagenes"><i class="fas fa-images"></i> Gestión de Imágenes</a></li>
-                        <li><a href="#pedidos"><i class="fas fa-shopping-bag"></i> Pedidos y Pagos</a></li>
+                        <li><a href="#pedidos"><i class="fas fa-shopping-bag"></i> Pedidos</a></li>
                         <li><a href="#configuracion"><i class="fas fa-cog"></i> Configuración</a></li>
                     </ul>
                 </nav>
             </div>
             
             <div class="admin-main">
-                <!-- Sección de Pedidos y Pagos -->
-                <div id="pedidos" class="admin-section">
-                    <h2 class="section-title"><i class="fas fa-shopping-bag"></i> Gestión de Pedidos y Pagos</h2>
+                <!-- Dashboard mejorado -->
+                <div id="dashboard" class="admin-section">
+                    <h2 class="section-title"><i class="fas fa-home"></i> Dashboard</h2>
+                    <div class="alert alert-success">
+                        <i class="fas fa-info-circle"></i> Bienvenido al panel de administración de PEQUETHOBIAS.
+                    </div>
                     
-                    <div class="filters">
-                        <div class="form-group">
-                            <label>Filtrar por estado:</label>
-                            <div class="category-selector">
-                                <div class="category-option active" data-status="all">Todos</div>
-                                <div class="category-option" data-status="pending">Pendientes</div>
-                                <div class="category-option" data-status="verified">Verificados</div>
-                                <div class="category-option" data-status="rejected">Rechazados</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon products">
+                                <i class="fas fa-tshirt"></i>
                             </div>
+                            <h3 id="total-products">0</h3>
+                            <p>Productos Totales</p>
                         </div>
                         
-                        <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                            <div class="form-group" style="flex: 1;">
-                                <input type="text" id="order-search" class="form-control" placeholder="Buscar pedidos...">
+                        <div class="stat-card">
+                            <div class="stat-icon orders">
+                                <i class="fas fa-shopping-cart"></i>
                             </div>
-                            <button class="btn btn-outline" id="refresh-orders">
-                                <i class="fas fa-sync-alt"></i> Actualizar
-                            </button>
+                            <h3 id="today-orders">0</h3>
+                            <p>Pedidos Hoy</p>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <h3 id="monthly-revenue">$0</h3>
+                            <p>Ingresos Mensuales</p>
                         </div>
                     </div>
                     
-                    <div class="orders-list" style="overflow-x: auto; margin-top: 1.5rem;">
-                        <table class="orders-table">
+                    <div class="admin-section" style="margin-top: 2rem;">
+                        <h3 class="section-title"><i class="fas fa-chart-line"></i> Actividad Reciente</h3>
+                        <div id="recent-activity" style="min-height: 200px; display: flex; align-items: center; justify-content: center; color: #777;">
+                            <p>Cargando actividad reciente...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agregar Producto mejorado -->
+                <div id="agregar-producto" class="admin-section hidden">
+                    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+                    
+                    <div id="add-product-alert"></div>
+                    
+                    <form id="product-form">
+                        <div class="form-group">
+                            <label for="product-name">Nombre del Producto <span class="required">*</span></label>
+                            <input type="text" id="product-name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-description">Descripción <span class="required">*</span></label>
+                            <textarea id="product-description" class="form-control" required></textarea>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="product-price">Precio ($) <span class="required">*</span></label>
+                                <input type="number" id="product-price" class="form-control" step="0.01" min="0" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product-category">Categoría <span class="required">*</span></label>
+                                <select id="product-category" class="form-control" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="ropa">Ropa</option>
+                                    <option value="pañalera">Pañaleras</option>
+                                    <option value="accesorios">Accesorios</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product-age">Edad Máxima (meses) <span class="required">*</span></label>
+                                <input type="number" id="product-age" class="form-control" min="0" max="12" value="12" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-image">Imagen del Producto (URL) <span class="required">*</span></label>
+                            <input type="text" id="product-image" class="form-control" placeholder="https://..." required>
+                            <div class="url-validation" id="url-validation"></div>
+                            
+                            <div class="image-preview-container">
+                                <img id="image-preview" class="preview-image" src="" alt="Previsualización de imagen">
+                            </div>
+                            
+                            <p style="margin-top: 5px; color: #777; font-size: 0.9rem;">
+                                <i class="fas fa-info-circle"></i> Puedes usar la Gestión de Imágenes para subir imágenes y obtener una URL
+                            </p>
+                        </div>
+                        
+                        <div class="image-upload" onclick="document.getElementById('product-image').focus()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Haz clic para pegar la URL de la imagen</p>
+                            <p><small>O arrastra una imagen para subirla</small></p>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Producto
+                            </button>
+                            <button type="button" class="btn btn-outline" id="cancel-edit">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Gestión de Productos mejorada -->
+                <div id="gestion-productos" class="admin-section hidden">
+                    <h2 class="section-title"><i class="fas fa-tshirt"></i> Gestión de Productos</h2>
+                    
+                    <div id="products-alert"></div>
+                    
+                    <div style="display: flex; gap: 15px; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 300px;">
+                            <input type="text" id="product-search" class="form-control" placeholder="Buscar productos por nombre o descripción...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <select id="product-filter" class="form-control">
+                                <option value="">Todas las categorías</option>
+                                <option value="ropa">Ropa</option>
+                                <option value="pañalera">Pañaleras</option>
+                                <option value="accesorios">Accesorios</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="product-list">
+                        <table class="product-table">
                             <thead>
                                 <tr>
-                                    <th>ID Pedido</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Total</th>
-                                    <th>Método Pago</th>
-                                    <th>Comprobante</th>
-                                    <th>Estado</th>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Categoría</th>
+                                    <th>Edad</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="orders-list">
-                                <!-- Los pedidos se cargarán aquí con JavaScript -->
-                                <tr>
-                                    <td colspan="8" style="text-align: center; padding: 2rem;">
-                                        Cargando pedidos...
-                                    </td>
-                                </tr>
+                            <tbody id="products-list">
+                                <!-- Los productos se cargarán aquí con JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -484,38 +719,76 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- Gestión de Imágenes mejorada -->
+                <div id="gestion-imagenes" class="admin-section hidden">
+                    <h2 class="section-title"><i class="fas fa-images"></i> Gestión de Imágenes</h2>
+                    
+                    <div class="form-group">
+                        <label>Subir Nueva Imagen</label>
+                        <div class="image-upload" id="image-upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                            <p><small>Formatos soportados: JPG, PNG, GIF, WEBP (Máx. 5MB)</small></p>
+                        </div>
+                        <input type="file" id="file-input" accept="image/*" style="display: none;" multiple>
+                        <div class="upload-progress hidden" id="upload-progress">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <div id="upload-status" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0;">
+                            <h3>Imágenes Subidas</h3>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="image-search" class="form-control" placeholder="Buscar imágenes..." style="width: 200px;">
+                                <button class="btn btn-outline" id="refresh-images">
+                                    <i class="fas fa-sync-alt"></i> Actualizar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="preview-container" id="images-container">
+                            <!-- Las imágenes se mostrarán aquí -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Modal para ver comprobante -->
-    <div class="modal-overlay" id="proof-modal">
-        <div class="proof-modal">
-            <div class="modal-header">
-                <h2>Comprobante de Pago</h2>
-                <button class="close-modal" id="close-proof">&times;</button>
+    <!-- Formulario de inicio de sesión mejorado -->
+    <div id="login-container" class="login-container">
+        <div class="login-logo">
+            <i class="fas fa-baby"></i>
+        </div>
+        <h1 class="login-title">PEQUETHOBIAS</h1>
+        <h2 class="section-title">Panel de Administración</h2>
+        
+        <div id="login-alert" class="alert alert-error hidden">
+            <i class="fas fa-exclamation-circle"></i> <span id="login-error-message">Credenciales incorrectas. Inténtalo de nuevo.</span>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" class="form-control" required autocomplete="username">
             </div>
             
-            <div id="proof-details">
-                <p><strong>ID Pedido:</strong> <span id="proof-order-id"></span></p>
-                <p><strong>Cliente:</strong> <span id="proof-customer"></span></p>
-                <p><strong>Método de Pago:</strong> <span id="proof-method"></span></p>
-                <p><strong>Monto:</strong> $<span id="proof-amount"></span></p>
-                <p><strong>Fecha:</strong> <span id="proof-date"></span></p>
-                
-                <div class="proof-upload" id="proof-image-container">
-                    <img id="proof-image" class="proof-image" src="" alt="Comprobante de pago">
-                </div>
-                
-                <div id="proof-actions" style="margin-top: 1.5rem; display: flex; gap: 10px;">
-                    <button class="btn verify-btn" id="verify-payment">
-                        <i class="fas fa-check-circle"></i> Verificar Pago
-                    </button>
-                    <button class="btn reject-btn" id="reject-payment">
-                        <i class="fas fa-times-circle"></i> Rechazar Pago
-                    </button>
-                </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" class="form-control" required autocomplete="current-password">
             </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+            </div>
+        </form>
+        
+        <div class="form-footer">
+            <p><i class="fas fa-lock"></i> Acceso restringido al personal autorizado</p>
         </div>
     </div>
 
@@ -525,154 +798,388 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Bucket para comprobantes de pago
-        const PAYMENT_PROOFS_BUCKET = 'payment-proofs';
+        // Bucket de almacenamiento de imágenes
+        const STORAGE_BUCKET = 'product-images';
         
         // Variables del DOM
-        const ordersList = document.getElementById('orders-list');
-        const refreshOrdersBtn = document.getElementById('refresh-orders');
+        const loginContainer = document.getElementById('login-container');
+        const adminPanel = document.getElementById('admin-panel');
+        const loginForm = document.getElementById('login-form');
+        const loginAlert = document.getElementById('login-alert');
+        const loginErrorMessage = document.getElementById('login-error-message');
+        const logoutBtn = document.getElementById('logout-btn');
+        const productForm = document.getElementById('product-form');
+        const productsList = document.getElementById('products-list');
+        const totalProducts = document.getElementById('total-products');
+        const todayOrders = document.getElementById('today-orders');
+        const monthlyRevenue = document.getElementById('monthly-revenue');
+        const productsAlert = document.getElementById('products-alert');
+        const addProductAlert = document.getElementById('add-product-alert');
+        const imagesContainer = document.getElementById('images-container');
+        const fileInput = document.getElementById('file-input');
+        const imageUploadArea = document.getElementById('image-upload-area');
+        const uploadProgress = document.getElementById('upload-progress');
+        const progressBar = document.getElementById('progress-bar');
+        const productImageInput = document.getElementById('product-image');
+        const imagePreview = document.getElementById('image-preview');
+        const urlValidation = document.getElementById('url-validation');
+        const productSearch = document.getElementById('product-search');
+        const productFilter = document.getElementById('product-filter');
         const prevPageBtn = document.getElementById('prev-page');
         const nextPageBtn = document.getElementById('next-page');
         const pageInfo = document.getElementById('page-info');
-        const proofModal = document.getElementById('proof-modal');
-        const closeProofBtn = document.getElementById('close-proof');
-        const proofImage = document.getElementById('proof-image');
-        const verifyPaymentBtn = document.getElementById('verify-payment');
-        const rejectPaymentBtn = document.getElementById('reject-payment');
-        const proofOrderId = document.getElementById('proof-order-id');
-        const proofCustomer = document.getElementById('proof-customer');
-        const proofMethod = document.getElementById('proof-method');
-        const proofAmount = document.getElementById('proof-amount');
-        const proofDate = document.getElementById('proof-date');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const refreshImagesBtn = document.getElementById('refresh-images');
+        const imageSearch = document.getElementById('image-search');
+        const uploadStatus = document.getElementById('upload-status');
         
         // Variables globales
         let currentPage = 1;
         const itemsPerPage = 10;
         let totalPages = 1;
-        let allOrders = [];
-        let currentStatusFilter = 'all';
-        let currentOrderId = null;
+        let allProducts = [];
+        let currentEditId = null;
         
-        // Función para formatear fecha
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return new Date(dateString).toLocaleDateString('es-ES', options);
+        // Mostrar información de depuración
+        const debugInfo = document.createElement('div');
+        debugInfo.className = 'debug-info';
+        debugInfo.innerHTML = 'Debug: No iniciado';
+        document.body.appendChild(debugInfo);
+        
+        // Actualizar información de depuración
+        function updateDebugInfo(message) {
+            debugInfo.innerHTML = `Debug: ${message}`;
+            console.log(`DEBUG: ${message}`);
         }
         
-        // Función para cargar pedidos
-        async function loadOrders() {
+        // Mostrar carga
+        function showLoading() {
+            const overlay = document.createElement('div');
+            overlay.className = 'loading-overlay';
+            overlay.innerHTML = '<div class="spinner"></div>';
+            document.body.appendChild(overlay);
+            return overlay;
+        }
+        
+        // Ocultar carga
+        function hideLoading(overlay) {
+            if (overlay) overlay.remove();
+        }
+        
+        // Validar URL
+        function isValidUrl(url) {
             try {
-                let query = supabaseClient
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // Previsualizar imagen
+        function previewImage(url) {
+            if (isValidUrl(url)) {
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+                urlValidation.textContent = 'URL válida';
+                urlValidation.className = 'url-validation url-valid';
+                urlValidation.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+                urlValidation.textContent = 'URL inválida';
+                urlValidation.className = 'url-validation url-invalid';
+                urlValidation.style.display = 'block';
+            }
+        }
+        
+        // Función para mostrar alertas
+        function showAlert(element, message, type = 'success') {
+            element.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 3000);
+        }
+        
+        // Iniciar sesión con Supabase Auth
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            updateDebugInfo('Inicio de proceso de login');
+            
+            const email = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            updateDebugInfo(`Usuario: ${email}, Contraseña: ${password ? '*****' : 'vacía'}`);
+            
+            if (!email || !password) {
+                updateDebugInfo('Campos vacíos detectados');
+                loginErrorMessage.textContent = "Por favor, completa todos los campos";
+                loginAlert.classList.remove('hidden');
+                return;
+            }
+            
+            const loading = showLoading();
+            
+            try {
+                const { user, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) throw error;
+                
+                updateDebugInfo('Inicio de sesión exitoso');
+                
+                loginContainer.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+                updateDebugInfo('Panel de administración visible');
+                
+                // Cargar datos iniciales
+                await loadDashboardData();
+                await loadProducts();
+                
+            } catch (error) {
+                updateDebugInfo(`Error en inicio de sesión: ${error.message}`);
+                loginErrorMessage.textContent = "Credenciales incorrectas. Inténtalo de nuevo.";
+                loginAlert.classList.remove('hidden');
+            } finally {
+                hideLoading(loading);
+            }
+        });
+        
+        // Cerrar sesión
+        logoutBtn.addEventListener('click', async () => {
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) console.error('Error al cerrar sesión:', error);
+            
+            adminPanel.classList.add('hidden');
+            loginContainer.classList.remove('hidden');
+            loginAlert.classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            updateDebugInfo('Sesión cerrada');
+        });
+        
+        // Cargar datos del dashboard
+        async function loadDashboardData() {
+            try {
+                // Total de productos
+                const { count: productsCount, error: productsError } = await supabaseClient
+                    .from('productos')
+                    .select('*', { count: 'exact' });
+                
+                if (productsError) throw productsError;
+                totalProducts.textContent = productsCount || 0;
+                
+                // Pedidos de hoy
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const { count: todayOrdersCount, error: ordersError } = await supabaseClient
                     .from('pedidos')
                     .select('*', { count: 'exact' })
-                    .order('fecha_creacion', { ascending: false });
+                    .gte('fecha_creacion', today.toISOString());
                 
-                // Aplicar filtro de estado
-                if (currentStatusFilter !== 'all') {
-                    query = query.eq('estado_pago', currentStatusFilter);
+                if (ordersError) throw ordersError;
+                todayOrders.textContent = todayOrdersCount || 0;
+                
+                // Ingresos mensuales
+                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                
+                const { data: monthlyOrders, error: monthlyError } = await supabaseClient
+                    .from('pedidos')
+                    .select('total')
+                    .gte('fecha_creacion', startOfMonth.toISOString());
+                
+                if (monthlyError) throw monthlyError;
+                
+                const revenue = monthlyOrders.reduce((sum, order) => sum + order.total, 0);
+                monthlyRevenue.textContent = `$${revenue.toFixed(2)}`;
+                
+            } catch (error) {
+                console.error('Error cargando datos del dashboard:', error);
+                showAlert(productsAlert, `Error cargando datos: ${error.message}`, 'error');
+            }
+        }
+        
+        // Navegación del panel
+        document.querySelectorAll('.admin-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Ocultar todas las secciones
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                
+                // Mostrar la sección seleccionada
+                const targetId = link.getAttribute('href').substring(1);
+                document.getElementById(targetId).classList.remove('hidden');
+                
+                // Actualizar enlace activo
+                document.querySelectorAll('.admin-nav a').forEach(a => {
+                    a.classList.remove('active');
+                });
+                link.classList.add('active');
+                
+                // Cargar datos específicos de la sección
+                if (targetId === 'gestion-productos') {
+                    loadProducts();
+                } else if (targetId === 'gestion-imagenes') {
+                    loadUploadedImages();
+                } else if (targetId === 'dashboard') {
+                    loadDashboardData();
+                }
+                
+                updateDebugInfo(`Navegando a: ${targetId}`);
+            });
+        });
+        
+        // Previsualización de imagen
+        productImageInput.addEventListener('blur', function() {
+            const url = this.value.trim();
+            if (url) {
+                previewImage(url);
+            } else {
+                imagePreview.style.display = 'none';
+                urlValidation.style.display = 'none';
+            }
+        });
+        
+        // Búsqueda de productos
+        productSearch.addEventListener('input', function() {
+            loadProducts();
+        });
+        
+        // Filtrado por categoría
+        productFilter.addEventListener('change', function() {
+            loadProducts();
+        });
+        
+        // Paginación
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                loadProducts();
+            }
+        });
+        
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadProducts();
+            }
+        });
+        
+        // Cancelar edición
+        cancelEditBtn.addEventListener('click', function() {
+            resetProductForm();
+        });
+        
+        // Refrescar imágenes
+        refreshImagesBtn.addEventListener('click', function() {
+            loadUploadedImages();
+        });
+        
+        // Buscar imágenes
+        imageSearch.addEventListener('input', function() {
+            filterImages(this.value);
+        });
+        
+        // Cargar productos con paginación
+        async function loadProducts() {
+            const loading = showLoading();
+            updateDebugInfo('Cargando productos...');
+            
+            try {
+                let query = supabaseClient
+                    .from('productos')
+                    .select('*', { count: 'exact' });
+                
+                // Aplicar búsqueda
+                const searchTerm = productSearch.value.trim();
+                if (searchTerm) {
+                    query = query.or(`nombre.ilike.%${searchTerm}%,descripcion.ilike.%${searchTerm}%`);
+                }
+                
+                // Aplicar filtro de categoría
+                const categoryFilter = productFilter.value;
+                if (categoryFilter) {
+                    query = query.eq('categoria', categoryFilter);
                 }
                 
                 // Aplicar paginación
                 const from = (currentPage - 1) * itemsPerPage;
                 const to = from + itemsPerPage - 1;
                 
-                const { data: pedidos, count, error } = await query
+                const { data: productos, count, error } = await query
+                    .order('id', { ascending: false })
                     .range(from, to);
                 
                 if (error) throw error;
+                
+                updateDebugInfo(`Productos cargados: ${productos?.length || 0}`);
                 
                 // Actualizar paginación
                 totalPages = Math.ceil(count / itemsPerPage);
                 updatePaginationControls();
                 
                 // Limpiar lista
-                ordersList.innerHTML = '';
+                productsList.innerHTML = '';
                 
-                if (!pedidos || pedidos.length === 0) {
-                    ordersList.innerHTML = `
+                if (!productos || productos.length === 0) {
+                    productsList.innerHTML = `
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 2rem;">
-                                No se encontraron pedidos
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                No se encontraron productos
                             </td>
                         </tr>
                     `;
                     return;
                 }
                 
-                // Guardar todos los pedidos para filtros
-                allOrders = pedidos;
-                
-                // Mostrar pedidos
-                pedidos.forEach(pedido => {
+                // Mostrar productos
+                productos.forEach(producto => {
                     const row = document.createElement('tr');
                     
-                    // Determinar clase de estado
-                    let statusClass = 'status-pending';
-                    let statusText = 'Pendiente';
-                    
-                    if (pedido.estado_pago === 'verified') {
-                        statusClass = 'status-verified';
-                        statusText = 'Verificado';
-                    } else if (pedido.estado_pago === 'rejected') {
-                        statusClass = 'status-rejected';
-                        statusText = 'Rechazado';
-                    }
-                    
                     row.innerHTML = `
-                        <td>${pedido.id}</td>
-                        <td>${formatDate(pedido.fecha_creacion)}</td>
-                        <td>${pedido.cliente_nombre || 'Sin especificar'}</td>
-                        <td>$${parseFloat(pedido.total).toFixed(2)}</td>
-                        <td>${getPaymentMethodName(pedido.metodo_pago)}</td>
                         <td>
-                            ${pedido.comprobante_url ? 
-                                `<a href="#" class="view-proof" data-id="${pedido.id}">
-                                    <i class="fas fa-eye"></i> Ver
-                                </a>` : 
-                                'Sin comprobante'}
+                            <div class="product-image" style="background-image: url('${producto.imagen_url}')"></div>
                         </td>
-                        <td><span class="order-status ${statusClass}">${statusText}</span></td>
                         <td>
-                            ${pedido.estado_pago === 'pending' ? `
-                                <button class="action-btn verify-btn" data-id="${pedido.id}">
-                                    <i class="fas fa-check"></i> Verificar
-                                </button>
-                                <button class="action-btn reject-btn" data-id="${pedido.id}">
-                                    <i class="fas fa-times"></i> Rechazar
-                                </button>
-                            ` : ''}
+                            <strong>${producto.nombre}</strong><br>
+                            <small>${producto.descripcion.substring(0, 50)}...</small>
+                        </td>
+                        <td>$${parseFloat(producto.precio).toFixed(2)}</td>
+                        <td>${producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}</td>
+                        <td>${producto.edad_max_meses} meses</td>
+                        <td>
+                            <button class="action-btn edit-btn" data-id="${producto.id}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="action-btn delete-btn" data-id="${producto.id}">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
                         </td>
                     `;
                     
-                    ordersList.appendChild(row);
+                    productsList.appendChild(row);
                 });
                 
-                // Inicializar eventos
-                initOrderEvents();
+                // Inicializar eventos de los botones
+                initProductEvents();
                 
             } catch (error) {
-                console.error('Error cargando pedidos:', error);
-                ordersList.innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 2rem; color: var(--error);">
-                            Error cargando pedidos: ${error.message}
-                        </td>
-                    </tr>
-                `;
+                updateDebugInfo(`Error cargando productos: ${error.message}`);
+                console.error("Error cargando productos:", error);
+                showAlert(productsAlert, `Error cargando productos: ${error.message}`, 'error');
+            } finally {
+                hideLoading(loading);
             }
-        }
-        
-        // Obtener nombre del método de pago
-        function getPaymentMethodName(method) {
-            const methods = {
-                'pago_movil': 'Pago Móvil',
-                'transfer': 'Transferencia Bancaria',
-                'zinli': 'Zinli',
-                'kontigo': 'Kontigo',
-                'cash': 'Efectivo'
-            };
-            
-            return methods[method] || method;
         }
         
         // Actualizar controles de paginación
@@ -682,183 +1189,429 @@
             nextPageBtn.disabled = currentPage >= totalPages;
         }
         
-        // Inicializar eventos de pedidos
-        function initOrderEvents() {
-            // Verificar pedido
-            document.querySelectorAll('.verify-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const orderId = this.dataset.id;
-                    updatePaymentStatus(orderId, 'verified');
+        // Inicializar eventos de productos
+        function initProductEvents() {
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const productId = btn.getAttribute('data-id');
+                    updateDebugInfo(`Editando producto ID: ${productId}`);
+                    editProduct(productId);
                 });
             });
             
-            // Rechazar pedido
-            document.querySelectorAll('.reject-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const orderId = this.dataset.id;
-                    updatePaymentStatus(orderId, 'rejected');
-                });
-            });
-            
-            // Ver comprobante
-            document.querySelectorAll('.view-proof').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const orderId = this.dataset.id;
-                    showPaymentProof(orderId);
-                });
-            });
-            
-            // Filtros por estado
-            document.querySelectorAll('.category-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.category-option').forEach(opt => {
-                        opt.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    currentStatusFilter = this.dataset.status;
-                    currentPage = 1;
-                    loadOrders();
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const productId = btn.getAttribute('data-id');
+                    updateDebugInfo(`Eliminando producto ID: ${productId}`);
+                    deleteProduct(productId);
                 });
             });
         }
         
-        // Mostrar comprobante de pago
-        async function showPaymentProof(orderId) {
+        // Resetear formulario de producto
+        function resetProductForm() {
+            productForm.reset();
+            imagePreview.style.display = 'none';
+            urlValidation.style.display = 'none';
+            cancelEditBtn.classList.add('hidden');
+            
+            const submitBtn = productForm.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
+            submitBtn.dataset.id = '';
+            
+            currentEditId = null;
+        }
+        
+        // Agregar nuevo producto
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            updateDebugInfo('Guardando producto...');
+            
+            const name = document.getElementById('product-name').value.trim();
+            const description = document.getElementById('product-description').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const age = parseInt(document.getElementById('product-age').value);
+            const imageUrl = document.getElementById('product-image').value.trim();
+            
+            // Validación de campos
+            if (!name || !description || !imageUrl) {
+                updateDebugInfo('Validación fallida: campos vacíos');
+                showAlert(addProductAlert, 'Todos los campos son obligatorios', 'error');
+                return;
+            }
+            
+            if (isNaN(price) || price <= 0) {
+                updateDebugInfo('Validación fallida: precio inválido');
+                showAlert(addProductAlert, 'Precio inválido', 'error');
+                return;
+            }
+            
+            if (isNaN(age) || age < 0 || age > 12) {
+                updateDebugInfo('Validación fallida: edad inválida');
+                showAlert(addProductAlert, 'Edad debe ser entre 0-12 meses', 'error');
+                return;
+            }
+            
+            if (!['ropa', 'pañalera', 'accesorios'].includes(category)) {
+                updateDebugInfo('Validación fallida: categoría inválida');
+                showAlert(addProductAlert, 'Categoría inválida', 'error');
+                return;
+            }
+            
+            // Validar URL de imagen
+            if (!isValidUrl(imageUrl)) {
+                updateDebugInfo('Validación fallida: URL de imagen inválida');
+                showAlert(addProductAlert, 'URL de imagen inválida', 'error');
+                return;
+            }
+            
+            const loading = showLoading();
+            
             try {
-                // Obtener detalles del pedido
-                const { data: pedido, error } = await supabaseClient
-                    .from('pedidos')
+                const productData = {
+                    nombre: name,
+                    descripcion: description,
+                    precio: price,
+                    categoria: category,
+                    edad_max_meses: age,
+                    imagen_url: imageUrl
+                };
+                
+                if (currentEditId) {
+                    // Actualizar producto existente
+                    const { error } = await supabaseClient
+                        .from('productos')
+                        .update(productData)
+                        .eq('id', currentEditId);
+                    
+                    if (error) throw error;
+                    
+                    updateDebugInfo('Producto actualizado exitosamente');
+                    showAlert(addProductAlert, 'Producto actualizado exitosamente!');
+                } else {
+                    // Crear nuevo producto
+                    const { error } = await supabaseClient
+                        .from('productos')
+                        .insert([productData]);
+                    
+                    if (error) throw error;
+                    
+                    updateDebugInfo('Producto agregado exitosamente');
+                    showAlert(addProductAlert, 'Producto agregado exitosamente!');
+                }
+                
+                // Limpiar formulario
+                resetProductForm();
+                
+                // Actualizar lista de productos
+                await loadProducts();
+                await loadDashboardData();
+                
+            } catch (error) {
+                updateDebugInfo(`Error guardando producto: ${error.message}`);
+                console.error("Error guardando producto:", error);
+                showAlert(addProductAlert, `Error al guardar producto: ${error.message}`, 'error');
+            } finally {
+                hideLoading(loading);
+            }
+        });
+        
+        // Editar producto
+        async function editProduct(id) {
+            const loading = showLoading();
+            updateDebugInfo(`Cargando producto para edición ID: ${id}`);
+            
+            try {
+                const { data: producto, error } = await supabaseClient
+                    .from('productos')
                     .select('*')
-                    .eq('id', orderId)
+                    .eq('id', id)
                     .single();
                 
                 if (error) throw error;
                 
-                // Llenar datos en el modal
-                proofOrderId.textContent = pedido.id;
-                proofCustomer.textContent = pedido.cliente_nombre || 'No especificado';
-                proofMethod.textContent = getPaymentMethodName(pedido.metodo_pago);
-                proofAmount.textContent = parseFloat(pedido.total).toFixed(2);
-                proofDate.textContent = formatDate(pedido.fecha_creacion);
+                updateDebugInfo(`Producto cargado: ${producto.nombre}`);
                 
-                // Mostrar imagen del comprobante
-                if (pedido.comprobante_url) {
-                    proofImage.src = pedido.comprobante_url;
-                    proofImage.style.display = 'block';
-                } else {
-                    proofImage.style.display = 'none';
-                    document.getElementById('proof-image-container').innerHTML = `
-                        <i class="fas fa-file-invoice payment-icon"></i>
-                        <p>No se encontró comprobante de pago</p>
-                    `;
-                }
+                // Llenar formulario con datos del producto
+                document.getElementById('product-name').value = producto.nombre;
+                document.getElementById('product-description').value = producto.descripcion;
+                document.getElementById('product-price').value = producto.precio;
+                document.getElementById('product-category').value = producto.categoria;
+                document.getElementById('product-age').value = producto.edad_max_meses;
+                document.getElementById('product-image').value = producto.imagen_url;
+                previewImage(producto.imagen_url);
                 
-                // Guardar ID del pedido actual
-                currentOrderId = pedido.id;
+                // Cambiar a la pestaña de agregar producto
+                document.querySelectorAll('.admin-nav a').forEach(a => {
+                    a.classList.remove('active');
+                });
+                document.querySelector('.admin-nav a[href="#agregar-producto"]').classList.add('active');
                 
-                // Mostrar acciones solo si está pendiente
-                if (pedido.estado_pago === 'pending') {
-                    document.getElementById('proof-actions').style.display = 'flex';
-                } else {
-                    document.getElementById('proof-actions').style.display = 'none';
-                }
+                document.querySelectorAll('.admin-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                document.getElementById('agregar-producto').classList.remove('hidden');
                 
-                // Mostrar modal
-                proofModal.classList.add('active');
+                // Cambiar el botón de guardar para actualizar
+                const submitBtn = productForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar Producto';
+                
+                // Mostrar botón de cancelar
+                cancelEditBtn.classList.remove('hidden');
+                
+                // Guardar ID para actualización
+                currentEditId = id;
                 
             } catch (error) {
-                console.error('Error cargando comprobante:', error);
-                alert(`Error: ${error.message}`);
+                updateDebugInfo(`Error obteniendo producto: ${error.message}`);
+                console.error("Error obteniendo producto:", error);
+                showAlert(addProductAlert, `Error al cargar producto: ${error.message}`, 'error');
+            } finally {
+                hideLoading(loading);
             }
         }
         
-        // Actualizar estado de pago
-        async function updatePaymentStatus(orderId, status) {
-            if (!confirm(`¿Estás seguro de que deseas marcar este pago como ${status === 'verified' ? 'VERIFICADO' : 'RECHAZADO'}?`)) {
+        // Eliminar producto
+        async function deleteProduct(id) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+                updateDebugInfo('Eliminación cancelada por el usuario');
                 return;
             }
             
+            const loading = showLoading();
+            updateDebugInfo(`Eliminando producto ID: ${id}`);
+            
             try {
                 const { error } = await supabaseClient
-                    .from('pedidos')
-                    .update({ estado_pago: status })
-                    .eq('id', orderId);
+                    .from('productos')
+                    .delete()
+                    .eq('id', id);
                 
                 if (error) throw error;
                 
-                alert(`El estado del pago ha sido actualizado a ${status === 'verified' ? 'VERIFICADO' : 'RECHAZADO'}`);
+                updateDebugInfo('Producto eliminado exitosamente');
+                showAlert(productsAlert, 'Producto eliminado exitosamente!');
                 
-                // Recargar pedidos
-                loadOrders();
-                
-                // Cerrar modal si está abierto
-                proofModal.classList.remove('active');
+                // Actualizar lista de productos
+                await loadProducts();
+                await loadDashboardData();
                 
             } catch (error) {
-                console.error('Error actualizando estado de pago:', error);
-                alert(`Error: ${error.message}`);
+                updateDebugInfo(`Error eliminando producto: ${error.message}`);
+                console.error("Error eliminando producto:", error);
+                showAlert(productsAlert, `Error al eliminar producto: ${error.message}`, 'error');
+            } finally {
+                hideLoading(loading);
             }
         }
         
-        // Inicializar eventos globales
-        function initGlobalEvents() {
-            // Cerrar modal
-            closeProofBtn.addEventListener('click', () => {
-                proofModal.classList.remove('active');
-            });
+        // Gestión de imágenes
+        imageUploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
             
-            // Cerrar modal al hacer clic fuera
-            proofModal.addEventListener('click', (e) => {
-                if (e.target === proofModal) {
-                    proofModal.classList.remove('active');
+            // Mostrar barra de progreso
+            uploadProgress.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            
+            // Subir cada archivo
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Validar tamaño de archivo
+                if (file.size > 5 * 1024 * 1024) {
+                    uploadStatus.innerHTML = `<div class="alert alert-error">${file.name} es demasiado grande (Máx. 5MB)</div>`;
+                    continue;
+                }
+                
+                // Validar tipo de archivo
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    uploadStatus.innerHTML = `<div class="alert alert-error">${file.name}: Formato no soportado</div>`;
+                    continue;
+                }
+                
+                updateDebugInfo(`Subiendo imagen: ${file.name}`);
+                
+                try {
+                    // Crear un nombre único para el archivo
+                    const fileName = `product-${Date.now()}-${file.name}`;
+                    const filePath = `${STORAGE_BUCKET}/${fileName}`;
+                    
+                    // Subir el archivo a Supabase Storage
+                    const { data, error } = await supabaseClient.storage
+                        .from(STORAGE_BUCKET)
+                        .upload(filePath, file, {
+                            cacheControl: '3600',
+                            upsert: false,
+                            onProgress: (progress) => {
+                                const percentage = Math.round(progress.loaded / progress.total * 100);
+                                progressBar.style.width = `${percentage}%`;
+                                uploadStatus.innerHTML = `<div>Subiendo ${file.name}: ${percentage}%</div>`;
+                            }
+                        });
+                    
+                    if (error) throw error;
+                    
+                    // Obtener URL pública de la imagen
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from(STORAGE_BUCKET)
+                        .getPublicUrl(filePath);
+                    
+                    updateDebugInfo(`Imagen subida: ${publicUrl}`);
+                    
+                    // Agregar imagen al contenedor
+                    addImageToContainer(publicUrl, filePath);
+                    
+                    // Mostrar mensaje de éxito
+                    uploadStatus.innerHTML = `<div class="alert alert-success">${file.name} subida exitosamente!</div>`;
+                    
+                } catch (error) {
+                    console.error('Error subiendo imagen:', error);
+                    uploadStatus.innerHTML = `<div class="alert alert-error">Error subiendo ${file.name}: ${error.message}</div>`;
+                }
+            }
+            
+            // Ocultar barra de progreso después de 3 segundos
+            setTimeout(() => {
+                uploadProgress.classList.add('hidden');
+            }, 3000);
+        });
+        
+        // Agregar imagen al contenedor
+        function addImageToContainer(url, path) {
+            const preview = document.createElement('div');
+            preview.className = 'image-preview';
+            preview.style.backgroundImage = `url('${url}')`;
+            preview.innerHTML = `
+                <div class="delete-btn" data-path="${path}">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            
+            // Agregar evento para eliminar la imagen
+            preview.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const path = e.target.closest('.delete-btn').dataset.path;
+                if (confirm('¿Eliminar esta imagen permanentemente?')) {
+                    const { error } = await supabaseClient.storage
+                        .from(STORAGE_BUCKET)
+                        .remove([path]);
+                    if (error) {
+                        alert('Error eliminando la imagen: ' + error.message);
+                    } else {
+                        preview.remove();
+                    }
                 }
             });
             
-            // Actualizar pedidos
-            refreshOrdersBtn.addEventListener('click', () => {
-                currentPage = 1;
-                loadOrders();
-            });
-            
-            // Paginación
-            prevPageBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    loadOrders();
+            // Agregar al contenedor
+            imagesContainer.appendChild(preview);
+        }
+        
+        // Cargar imágenes subidas
+        async function loadUploadedImages() {
+            const loading = showLoading();
+            try {
+                // Obtener lista de archivos en el bucket
+                const { data, error } = await supabaseClient.storage
+                    .from(STORAGE_BUCKET)
+                    .list();
+                
+                if (error) throw error;
+                
+                // Limpiar contenedor
+                imagesContainer.innerHTML = '';
+                
+                // Filtrar solo imágenes
+                const imageFiles = data.filter(file => 
+                    file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+                );
+                
+                if (imageFiles.length === 0) {
+                    imagesContainer.innerHTML = '<p>No hay imágenes subidas aún.</p>';
+                    return;
                 }
-            });
+                
+                // Crear elementos de previsualización
+                imageFiles.forEach(file => {
+                    const filePath = `${STORAGE_BUCKET}/${file.name}`;
+                    
+                    // Obtener URL pública
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from(STORAGE_BUCKET)
+                        .getPublicUrl(filePath);
+                    
+                    addImageToContainer(publicUrl, filePath);
+                });
+                
+            } catch (error) {
+                console.error('Error cargando imágenes:', error);
+                showAlert(uploadStatus, `Error cargando imágenes: ${error.message}`, 'error');
+            } finally {
+                hideLoading(loading);
+            }
+        }
+        
+        // Filtrar imágenes por término de búsqueda
+        function filterImages(searchTerm) {
+            const previews = document.querySelectorAll('.image-preview');
             
-            nextPageBtn.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    loadOrders();
-                }
-            });
-            
-            // Verificar desde el modal
-            verifyPaymentBtn.addEventListener('click', () => {
-                if (currentOrderId) {
-                    updatePaymentStatus(currentOrderId, 'verified');
-                }
-            });
-            
-            // Rechazar desde el modal
-            rejectPaymentBtn.addEventListener('click', () => {
-                if (currentOrderId) {
-                    updatePaymentStatus(currentOrderId, 'rejected');
+            previews.forEach(preview => {
+                const url = preview.style.backgroundImage.replace('url("', '').replace('")', '');
+                const fileName = url.substring(url.lastIndexOf('/') + 1).toLowerCase();
+                
+                if (fileName.includes(searchTerm.toLowerCase())) {
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
                 }
             });
         }
         
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
-            initGlobalEvents();
-            loadOrders();
+        // Permitir arrastrar y soltar imágenes
+        imageUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadArea.style.borderColor = '#8BD3E6';
+            imageUploadArea.style.backgroundColor = 'rgba(139, 211, 230, 0.1)';
         });
+        
+        imageUploadArea.addEventListener('dragleave', () => {
+            imageUploadArea.style.borderColor = '#ddd';
+            imageUploadArea.style.backgroundColor = '';
+        });
+        
+        imageUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadArea.style.borderColor = '#ddd';
+            imageUploadArea.style.backgroundColor = '';
+            
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
+                updateDebugInfo('Imagen arrastrada y soltada');
+            }
+        });
+        
+        // Comprobar sesión al cargar la página
+        async function checkAuth() {
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            if (user) {
+                loginContainer.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+                await loadDashboardData();
+                await loadProducts();
+            }
+        }
+        
+        // Inicializar
+        checkAuth();
     </script>
 </body>
 </html>
