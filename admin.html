@@ -7,525 +7,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/@supabase/supabase-js"></script>
     <style>
-        /* Variables de colores mejoradas para contraste */
-        :root {
-            --primary: #E91E63;
-            --secondary: #03A9F4;
-            --accent: #FFC107;
-            --light: #FFF9F5;
-            --dark: #263238;
-            --success: #4CAF50;
-            --highlight: #FF4081;
-            --admin-bg: #f8f9fc;
-            --error: #F44336;
-            --warning: #FF9800;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
-        
-        body {
-            background-color: var(--admin-bg);
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        .admin-header {
-            background: linear-gradient(135deg, var(--dark), #1c2331);
-            color: white;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        }
-        
-        .admin-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .admin-logo i {
-            font-size: 1.8rem;
-            color: var(--accent);
-            animation: pulse 2s infinite;
-        }
-        
-        .admin-logo h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-        }
-        
-        .admin-container {
-            display: flex;
-            min-height: calc(100vh - 70px);
-        }
-        
-        .admin-sidebar {
-            width: 250px;
-            background: white;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            padding: 2rem 0;
-        }
-        
-        .admin-nav ul {
-            list-style: none;
-        }
-        
-        .admin-nav li {
-            margin-bottom: 5px;
-        }
-        
-        .admin-nav a {
-            display: block;
-            padding: 12px 20px;
-            color: var(--dark);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            display: flex;
-            align-items: center;
-        }
-        
-        .admin-nav a:hover, .admin-nav a.active {
-            background: rgba(3, 169, 244, 0.1);
-            border-left: 4px solid var(--secondary);
-            color: var(--secondary);
-        }
-        
-        .admin-nav a i {
-            width: 25px;
-            text-align: center;
-            margin-right: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .admin-main {
-            flex: 1;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-        
-        .admin-section {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .section-title {
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 2px solid #f0f0f0;
-            font-size: 1.8rem;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .section-title i {
-            color: var(--secondary);
-        }
-        
-        /* Mejoras en formularios */
-        .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        /* ... (todos los estilos existentes) ... */
+
+        /* Nuevos estilos para verificación de pagos */
+        .payment-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: 500;
-            color: var(--dark);
         }
         
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
+        .status-pending_verification {
+            background: #FFF3CD;
+            color: #856404;
+        }
+        
+        .status-verified {
+            background: #D4EDDA;
+            color: #155724;
+        }
+        
+        .status-rejected {
+            background: #F8D7DA;
+            color: #721C24;
+        }
+        
+        .order-details {
+            background: #f8f9fa;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-        
-        .form-control:focus {
-            border-color: var(--secondary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(3, 169, 244, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        }
-        
-        .btn:hover {
-            background: #039BE5;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-        }
-        
-        .btn-primary:hover {
-            background: #D81B60;
-        }
-        
-        .btn-accent {
-            background: var(--accent);
-            color: var(--dark);
-        }
-        
-        .btn-accent:hover {
-            background: #FFB300;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--secondary);
-            color: var(--secondary);
-        }
-        
-        .btn-outline:hover {
-            background: rgba(3, 169, 244, 0.1);
-        }
-        
-        /* Mejoras en carga de imágenes */
-        .image-upload {
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-            background: #fafafa;
-        }
-        
-        .image-upload:hover {
-            border-color: var(--secondary);
-            background: rgba(139, 211, 230, 0.05);
-        }
-        
-        .image-upload i {
-            font-size: 3rem;
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
-        
-        .image-upload p {
-            color: #777;
-            margin-bottom: 1rem;
-        }
-        
-        .preview-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
+            padding: 1rem;
             margin-top: 1rem;
         }
         
-        .image-preview {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            height: 150px;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .image-preview:hover {
-            transform: scale(1.05);
-        }
-        
-        .image-preview .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(233, 30, 99, 0.9);
-            color: white;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-        }
-        
-        .image-preview:hover .delete-btn {
-            opacity: 1;
-        }
-        
-        /* Nuevos estilos para dashboard */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-icon.products {
-            background: rgba(3, 169, 244, 0.1);
-            color: var(--secondary);
-        }
-        
-        .stat-icon.orders {
-            background: rgba(233, 30, 99, 0.1);
-            color: var(--primary);
-        }
-        
-        .stat-icon.revenue {
-            background: rgba(255, 193, 7, 0.1);
-            color: var(--accent);
-        }
-        
-        .stat-card h3 {
-            font-size: 2.5rem;
+        .order-detail-item {
             margin-bottom: 0.5rem;
+            display: flex;
         }
         
-        .stat-card p {
-            color: #777;
-        }
-        
-        /* Mejoras en tablas */
-        .product-list {
-            overflow-x: auto;
-            border-radius: 10px;
-            border: 1px solid #eee;
-        }
-        
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-        
-        .product-table th, .product-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .product-table th {
-            background: #f8f9fc;
+        .order-detail-label {
             font-weight: 600;
-            color: var(--dark);
-            position: sticky;
-            top: 0;
+            min-width: 150px;
         }
         
-        .product-table tr:hover {
-            background: #f8f9fc;
-        }
-        
-        .product-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 5px;
-            background-size: cover;
-            background-position: center;
-            border: 1px solid #eee;
-        }
-        
-        .action-btn {
-            padding: 6px 10px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .edit-btn {
-            background: rgba(3, 169, 244, 0.1);
-            color: var(--secondary);
-        }
-        
-        .edit-btn:hover {
-            background: var(--secondary);
-            color: white;
-        }
-        
-        .delete-btn {
-            background: rgba(233, 30, 99, 0.1);
-            color: var(--primary);
-        }
-        
-        .delete-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        /* Nuevos estilos para paginación */
-        .pagination {
+        .action-buttons {
             display: flex;
-            justify-content: center;
             gap: 0.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1rem;
         }
         
-        .page-btn {
-            background: white;
-            color: var(--dark);
-            border: 1px solid #ddd;
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .view-receipt {
+            color: var(--secondary);
+            text-decoration: underline;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .page-btn:hover, .page-btn.active {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-        }
-        
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        /* Mejoras responsive */
-        @media (max-width: 768px) {
-            .admin-container {
-                flex-direction: column;
-            }
-            
-            .admin-sidebar {
-                width: 100%;
-            }
-            
-            .admin-main {
-                padding: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Nuevo: Barra de progreso mejorada */
-        .upload-progress {
-            height: 8px;
-            background: #f0f0f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: var(--secondary);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        /* Nuevo: Selector de categorías mejorado */
-        .category-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .category-option {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .category-option:hover, .category-option.active {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
         }
     </style>
 </head>
@@ -551,244 +85,60 @@
                         <li><a href="#dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                         <li><a href="#agregar-producto"><i class="fas fa-plus-circle"></i> Agregar Producto</a></li>
                         <li><a href="#gestion-productos"><i class="fas fa-tshirt"></i> Gestionar Productos</a></li>
+                        <li><a href="#gestion-pagos"><i class="fas fa-money-check"></i> Verificar Pagos</a></li>
                         <li><a href="#gestion-imagenes"><i class="fas fa-images"></i> Gestión de Imágenes</a></li>
-                        <li><a href="#pedidos"><i class="fas fa-shopping-bag"></i> Pedidos</a></li>
                         <li><a href="#configuracion"><i class="fas fa-cog"></i> Configuración</a></li>
                     </ul>
                 </nav>
             </div>
             
             <div class="admin-main">
-                <!-- Dashboard mejorado -->
-                <div id="dashboard" class="admin-section">
-                    <h2 class="section-title"><i class="fas fa-home"></i> Dashboard</h2>
-                    <div class="alert alert-success">
-                        <i class="fas fa-info-circle"></i> Bienvenido al panel de administración de PEQUETHOBIAS.
-                    </div>
-                    
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon products">
-                                <i class="fas fa-tshirt"></i>
-                            </div>
-                            <h3 id="total-products">0</h3>
-                            <p>Productos Totales</p>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon orders">
-                                <i class="fas fa-shopping-cart"></i>
-                            </div>
-                            <h3 id="today-orders">0</h3>
-                            <p>Pedidos Hoy</p>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon revenue">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <h3 id="monthly-revenue">$0</h3>
-                            <p>Ingresos Mensuales</p>
-                        </div>
-                    </div>
-                    
-                    <div class="admin-section" style="margin-top: 2rem;">
-                        <h3 class="section-title"><i class="fas fa-chart-line"></i> Actividad Reciente</h3>
-                        <div id="recent-activity" style="min-height: 200px; display: flex; align-items: center; justify-content: center; color: #777;">
-                            <p>Cargando actividad reciente...</p>
-                        </div>
-                    </div>
-                </div>
+                <!-- ... (secciones existentes) ... -->
                 
-                <!-- Agregar Producto mejorado -->
-                <div id="agregar-producto" class="admin-section hidden">
-                    <h2 class="section-title"><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+                <!-- Nueva sección para verificación de pagos -->
+                <div id="gestion-pagos" class="admin-section hidden">
+                    <h2 class="section-title"><i class="fas fa-money-check"></i> Verificación de Pagos</h2>
                     
-                    <div id="add-product-alert"></div>
-                    
-                    <form id="product-form">
-                        <div class="form-group">
-                            <label for="product-name">Nombre del Producto <span class="required">*</span></label>
-                            <input type="text" id="product-name" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="product-description">Descripción <span class="required">*</span></label>
-                            <textarea id="product-description" class="form-control" required></textarea>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
-                            <div class="form-group">
-                                <label for="product-price">Precio ($) <span class="required">*</span></label>
-                                <input type="number" id="product-price" class="form-control" step="0.01" min="0" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="product-category">Categoría <span class="required">*</span></label>
-                                <select id="product-category" class="form-control" required>
-                                    <option value="">Seleccionar categoría</option>
-                                    <option value="ropa">Ropa</option>
-                                    <option value="pañalera">Pañaleras</option>
-                                    <option value="accesorios">Accesorios</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="product-age">Edad Máxima (meses) <span class="required">*</span></label>
-                                <input type="number" id="product-age" class="form-control" min="0" max="12" value="12" required>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="product-image">Imagen del Producto (URL) <span class="required">*</span></label>
-                            <input type="text" id="product-image" class="form-control" placeholder="https://..." required>
-                            <div class="url-validation" id="url-validation"></div>
-                            
-                            <div class="image-preview-container">
-                                <img id="image-preview" class="preview-image" src="" alt="Previsualización de imagen">
-                            </div>
-                            
-                            <p style="margin-top: 5px; color: #777; font-size: 0.9rem;">
-                                <i class="fas fa-info-circle"></i> Puedes usar la Gestión de Imágenes para subir imágenes y obtener una URL
-                            </p>
-                        </div>
-                        
-                        <div class="image-upload" onclick="document.getElementById('product-image').focus()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Haz clic para pegar la URL de la imagen</p>
-                            <p><small>O arrastra una imagen para subirla</small></p>
-                        </div>
-                        
-                        <div style="margin-top: 1.5rem; display: flex; gap: 10px;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Producto
-                            </button>
-                            <button type="button" class="btn btn-outline" id="cancel-edit">
-                                <i class="fas fa-times"></i> Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                
-                <!-- Gestión de Productos mejorada -->
-                <div id="gestion-productos" class="admin-section hidden">
-                    <h2 class="section-title"><i class="fas fa-tshirt"></i> Gestión de Productos</h2>
-                    
-                    <div id="products-alert"></div>
-                    
-                    <div style="display: flex; gap: 15px; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                        <div class="form-group" style="flex: 1; min-width: 300px;">
-                            <input type="text" id="product-search" class="form-control" placeholder="Buscar productos por nombre o descripción...">
-                        </div>
-                        
-                        <div class="form-group">
-                            <select id="product-filter" class="form-control">
-                                <option value="">Todas las categorías</option>
-                                <option value="ropa">Ropa</option>
-                                <option value="pañalera">Pañaleras</option>
-                                <option value="accesorios">Accesorios</option>
-                            </select>
-                        </div>
+                    <div class="filters">
+                        <select id="payment-status-filter" class="form-control">
+                            <option value="pending_verification">Pendientes de verificación</option>
+                            <option value="verified">Verificados</option>
+                            <option value="rejected">Rechazados</option>
+                            <option value="all">Todos</option>
+                        </select>
+                        <button id="refresh-payments" class="btn"><i class="fas fa-sync"></i> Actualizar</button>
                     </div>
                     
-                    <div class="product-list">
+                    <div class="table-responsive">
                         <table class="product-table">
                             <thead>
                                 <tr>
-                                    <th>Imagen</th>
-                                    <th>Producto</th>
-                                    <th>Precio</th>
-                                    <th>Categoría</th>
-                                    <th>Edad</th>
+                                    <th>ID Pedido</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Método</th>
+                                    <th>Estado</th>
+                                    <th>Comprobante</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="products-list">
-                                <!-- Los productos se cargarán aquí con JavaScript -->
+                            <tbody id="payments-list">
+                                <!-- Los pedidos se cargarán aquí -->
                             </tbody>
                         </table>
                     </div>
                     
-                    <div class="pagination" id="pagination">
-                        <button class="page-btn" id="prev-page" disabled>
+                    <div class="pagination" id="payments-pagination">
+                        <button class="page-btn" id="prev-payment-page">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span id="page-info">Página 1 de 1</span>
-                        <button class="page-btn" id="next-page" disabled>
+                        <span id="payment-page-info">Página 1 de 1</span>
+                        <button class="page-btn" id="next-payment-page">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
-                
-                <!-- Gestión de Imágenes mejorada -->
-                <div id="gestion-imagenes" class="admin-section hidden">
-                    <h2 class="section-title"><i class="fas fa-images"></i> Gestión de Imágenes</h2>
-                    
-                    <div class="form-group">
-                        <label>Subir Nueva Imagen</label>
-                        <div class="image-upload" id="image-upload-area">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
-                            <p><small>Formatos soportados: JPG, PNG, GIF, WEBP (Máx. 5MB)</small></p>
-                        </div>
-                        <input type="file" id="file-input" accept="image/*" style="display: none;" multiple>
-                        <div class="upload-progress hidden" id="upload-progress">
-                            <div class="progress-bar" id="progress-bar"></div>
-                        </div>
-                        <div id="upload-status" style="margin-top: 10px;"></div>
-                    </div>
-                    
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1.5rem 0;">
-                            <h3>Imágenes Subidas</h3>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="image-search" class="form-control" placeholder="Buscar imágenes..." style="width: 200px;">
-                                <button class="btn btn-outline" id="refresh-images">
-                                    <i class="fas fa-sync-alt"></i> Actualizar
-                                </button>
-                            </div>
-                        </div>
-                        <div class="preview-container" id="images-container">
-                            <!-- Las imágenes se mostrarán aquí -->
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Formulario de inicio de sesión mejorado -->
-    <div id="login-container" class="login-container">
-        <div class="login-logo">
-            <i class="fas fa-baby"></i>
-        </div>
-        <h1 class="login-title">PEQUETHOBIAS</h1>
-        <h2 class="section-title">Panel de Administración</h2>
-        
-        <div id="login-alert" class="alert alert-error hidden">
-            <i class="fas fa-exclamation-circle"></i> <span id="login-error-message">Credenciales incorrectas. Inténtalo de nuevo.</span>
-        </div>
-        
-        <form id="login-form">
-            <div class="form-group">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" class="form-control" required autocomplete="username">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" class="form-control" required autocomplete="current-password">
-            </div>
-            
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </button>
-            </div>
-        </form>
-        
-        <div class="form-footer">
-            <p><i class="fas fa-lock"></i> Acceso restringido al personal autorizado</p>
         </div>
     </div>
 
@@ -798,820 +148,290 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncGZneW9pend2bHdueGRmY3puIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTE5MTg1NywiZXhwIjoyMDcwNzY3ODU3fQ.BOEYOsT-shLG8CxqFgheAbbBF4Q8ot9VcHV06QczpKk';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Bucket de almacenamiento de imágenes
-        const STORAGE_BUCKET = 'product-images';
+        // Variables para paginación de pagos
+        let currentPaymentPage = 1;
+        const paymentsPerPage = 10;
+        let totalPaymentPages = 1;
         
-        // Variables del DOM
-        const loginContainer = document.getElementById('login-container');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginForm = document.getElementById('login-form');
-        const loginAlert = document.getElementById('login-alert');
-        const loginErrorMessage = document.getElementById('login-error-message');
-        const logoutBtn = document.getElementById('logout-btn');
-        const productForm = document.getElementById('product-form');
-        const productsList = document.getElementById('products-list');
-        const totalProducts = document.getElementById('total-products');
-        const todayOrders = document.getElementById('today-orders');
-        const monthlyRevenue = document.getElementById('monthly-revenue');
-        const productsAlert = document.getElementById('products-alert');
-        const addProductAlert = document.getElementById('add-product-alert');
-        const imagesContainer = document.getElementById('images-container');
-        const fileInput = document.getElementById('file-input');
-        const imageUploadArea = document.getElementById('image-upload-area');
-        const uploadProgress = document.getElementById('upload-progress');
-        const progressBar = document.getElementById('progress-bar');
-        const productImageInput = document.getElementById('product-image');
-        const imagePreview = document.getElementById('image-preview');
-        const urlValidation = document.getElementById('url-validation');
-        const productSearch = document.getElementById('product-search');
-        const productFilter = document.getElementById('product-filter');
-        const prevPageBtn = document.getElementById('prev-page');
-        const nextPageBtn = document.getElementById('next-page');
-        const pageInfo = document.getElementById('page-info');
-        const cancelEditBtn = document.getElementById('cancel-edit');
-        const refreshImagesBtn = document.getElementById('refresh-images');
-        const imageSearch = document.getElementById('image-search');
-        const uploadStatus = document.getElementById('upload-status');
-        
-        // Variables globales
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        let totalPages = 1;
-        let allProducts = [];
-        let currentEditId = null;
-        
-        // Mostrar información de depuración
-        const debugInfo = document.createElement('div');
-        debugInfo.className = 'debug-info';
-        debugInfo.innerHTML = 'Debug: No iniciado';
-        document.body.appendChild(debugInfo);
-        
-        // Actualizar información de depuración
-        function updateDebugInfo(message) {
-            debugInfo.innerHTML = `Debug: ${message}`;
-            console.log(`DEBUG: ${message}`);
-        }
-        
-        // Mostrar carga
-        function showLoading() {
-            const overlay = document.createElement('div');
-            overlay.className = 'loading-overlay';
-            overlay.innerHTML = '<div class="spinner"></div>';
-            document.body.appendChild(overlay);
-            return overlay;
-        }
-        
-        // Ocultar carga
-        function hideLoading(overlay) {
-            if (overlay) overlay.remove();
-        }
-        
-        // Validar URL
-        function isValidUrl(url) {
-            try {
-                new URL(url);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-        
-        // Previsualizar imagen
-        function previewImage(url) {
-            if (isValidUrl(url)) {
-                imagePreview.src = url;
-                imagePreview.style.display = 'block';
-                urlValidation.textContent = 'URL válida';
-                urlValidation.className = 'url-validation url-valid';
-                urlValidation.style.display = 'block';
-            } else {
-                imagePreview.style.display = 'none';
-                urlValidation.textContent = 'URL inválida';
-                urlValidation.className = 'url-validation url-invalid';
-                urlValidation.style.display = 'block';
-            }
-        }
-        
-        // Función para mostrar alertas
-        function showAlert(element, message, type = 'success') {
-            element.innerHTML = `
-                <div class="alert alert-${type}">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}
-                </div>
-            `;
-            
-            setTimeout(() => {
-                element.innerHTML = '';
-            }, 3000);
-        }
-        
-        // Iniciar sesión con Supabase Auth
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            updateDebugInfo('Inicio de proceso de login');
-            
-            const email = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            
-            updateDebugInfo(`Usuario: ${email}, Contraseña: ${password ? '*****' : 'vacía'}`);
-            
-            if (!email || !password) {
-                updateDebugInfo('Campos vacíos detectados');
-                loginErrorMessage.textContent = "Por favor, completa todos los campos";
-                loginAlert.classList.remove('hidden');
-                return;
-            }
-            
+        // ... (funciones existentes) ...
+
+        // Cargar pagos
+        async function loadPayments() {
+            const statusFilter = document.getElementById('payment-status-filter').value;
             const loading = showLoading();
-            
-            try {
-                const { user, error } = await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) throw error;
-                
-                updateDebugInfo('Inicio de sesión exitoso');
-                
-                loginContainer.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-                updateDebugInfo('Panel de administración visible');
-                
-                // Cargar datos iniciales
-                await loadDashboardData();
-                await loadProducts();
-                
-            } catch (error) {
-                updateDebugInfo(`Error en inicio de sesión: ${error.message}`);
-                loginErrorMessage.textContent = "Credenciales incorrectas. Inténtalo de nuevo.";
-                loginAlert.classList.remove('hidden');
-            } finally {
-                hideLoading(loading);
-            }
-        });
-        
-        // Cerrar sesión
-        logoutBtn.addEventListener('click', async () => {
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) console.error('Error al cerrar sesión:', error);
-            
-            adminPanel.classList.add('hidden');
-            loginContainer.classList.remove('hidden');
-            loginAlert.classList.add('hidden');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            updateDebugInfo('Sesión cerrada');
-        });
-        
-        // Cargar datos del dashboard
-        async function loadDashboardData() {
-            try {
-                // Total de productos
-                const { count: productsCount, error: productsError } = await supabaseClient
-                    .from('productos')
-                    .select('*', { count: 'exact' });
-                
-                if (productsError) throw productsError;
-                totalProducts.textContent = productsCount || 0;
-                
-                // Pedidos de hoy
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                const { count: todayOrdersCount, error: ordersError } = await supabaseClient
-                    .from('pedidos')
-                    .select('*', { count: 'exact' })
-                    .gte('fecha_creacion', today.toISOString());
-                
-                if (ordersError) throw ordersError;
-                todayOrders.textContent = todayOrdersCount || 0;
-                
-                // Ingresos mensuales
-                const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-                
-                const { data: monthlyOrders, error: monthlyError } = await supabaseClient
-                    .from('pedidos')
-                    .select('total')
-                    .gte('fecha_creacion', startOfMonth.toISOString());
-                
-                if (monthlyError) throw monthlyError;
-                
-                const revenue = monthlyOrders.reduce((sum, order) => sum + order.total, 0);
-                monthlyRevenue.textContent = `$${revenue.toFixed(2)}`;
-                
-            } catch (error) {
-                console.error('Error cargando datos del dashboard:', error);
-                showAlert(productsAlert, `Error cargando datos: ${error.message}`, 'error');
-            }
-        }
-        
-        // Navegación del panel
-        document.querySelectorAll('.admin-nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Ocultar todas las secciones
-                document.querySelectorAll('.admin-section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-                
-                // Mostrar la sección seleccionada
-                const targetId = link.getAttribute('href').substring(1);
-                document.getElementById(targetId).classList.remove('hidden');
-                
-                // Actualizar enlace activo
-                document.querySelectorAll('.admin-nav a').forEach(a => {
-                    a.classList.remove('active');
-                });
-                link.classList.add('active');
-                
-                // Cargar datos específicos de la sección
-                if (targetId === 'gestion-productos') {
-                    loadProducts();
-                } else if (targetId === 'gestion-imagenes') {
-                    loadUploadedImages();
-                } else if (targetId === 'dashboard') {
-                    loadDashboardData();
-                }
-                
-                updateDebugInfo(`Navegando a: ${targetId}`);
-            });
-        });
-        
-        // Previsualización de imagen
-        productImageInput.addEventListener('blur', function() {
-            const url = this.value.trim();
-            if (url) {
-                previewImage(url);
-            } else {
-                imagePreview.style.display = 'none';
-                urlValidation.style.display = 'none';
-            }
-        });
-        
-        // Búsqueda de productos
-        productSearch.addEventListener('input', function() {
-            loadProducts();
-        });
-        
-        // Filtrado por categoría
-        productFilter.addEventListener('change', function() {
-            loadProducts();
-        });
-        
-        // Paginación
-        prevPageBtn.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                loadProducts();
-            }
-        });
-        
-        nextPageBtn.addEventListener('click', () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                loadProducts();
-            }
-        });
-        
-        // Cancelar edición
-        cancelEditBtn.addEventListener('click', function() {
-            resetProductForm();
-        });
-        
-        // Refrescar imágenes
-        refreshImagesBtn.addEventListener('click', function() {
-            loadUploadedImages();
-        });
-        
-        // Buscar imágenes
-        imageSearch.addEventListener('input', function() {
-            filterImages(this.value);
-        });
-        
-        // Cargar productos con paginación
-        async function loadProducts() {
-            const loading = showLoading();
-            updateDebugInfo('Cargando productos...');
             
             try {
                 let query = supabaseClient
-                    .from('productos')
-                    .select('*', { count: 'exact' });
+                    .from('orders')
+                    .select('*', { count: 'exact' })
+                    .order('created_at', { ascending: false });
                 
-                // Aplicar búsqueda
-                const searchTerm = productSearch.value.trim();
-                if (searchTerm) {
-                    query = query.or(`nombre.ilike.%${searchTerm}%,descripcion.ilike.%${searchTerm}%`);
+                if (statusFilter !== 'all') {
+                    query = query.eq('status', statusFilter);
                 }
                 
-                // Aplicar filtro de categoría
-                const categoryFilter = productFilter.value;
-                if (categoryFilter) {
-                    query = query.eq('categoria', categoryFilter);
-                }
+                // Paginación
+                const from = (currentPaymentPage - 1) * paymentsPerPage;
+                const to = from + paymentsPerPage - 1;
                 
-                // Aplicar paginación
-                const from = (currentPage - 1) * itemsPerPage;
-                const to = from + itemsPerPage - 1;
-                
-                const { data: productos, count, error } = await query
-                    .order('id', { ascending: false })
-                    .range(from, to);
+                const { data: orders, count, error } = await query.range(from, to);
                 
                 if (error) throw error;
                 
-                updateDebugInfo(`Productos cargados: ${productos?.length || 0}`);
-                
                 // Actualizar paginación
-                totalPages = Math.ceil(count / itemsPerPage);
-                updatePaginationControls();
+                totalPaymentPages = Math.ceil(count / paymentsPerPage);
+                updatePaymentPagination();
                 
-                // Limpiar lista
-                productsList.innerHTML = '';
+                // Mostrar pedidos
+                const paymentsList = document.getElementById('payments-list');
+                paymentsList.innerHTML = '';
                 
-                if (!productos || productos.length === 0) {
-                    productsList.innerHTML = `
+                if (!orders || orders.length === 0) {
+                    paymentsList.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 2rem;">
-                                No se encontraron productos
-                            </td>
+                            <td colspan="7" class="text-center">No se encontraron pedidos</td>
                         </tr>
                     `;
                     return;
                 }
                 
-                // Mostrar productos
-                productos.forEach(producto => {
-                    const row = document.createElement('tr');
+                orders.forEach(order => {
+                    const statusClass = `status-${order.status}`;
+                    const statusText = {
+                        'pending_verification': 'Pendiente',
+                        'verified': 'Verificado',
+                        'rejected': 'Rechazado'
+                    }[order.status];
                     
+                    const formattedDate = new Date(order.created_at).toLocaleDateString();
+                    
+                    const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>#${order.id}</td>
+                        <td>${formattedDate}</td>
+                        <td>$${order.total.toFixed(2)}</td>
+                        <td>${order.payment_method}</td>
+                        <td><span class="payment-status ${statusClass}">${statusText}</span></td>
                         <td>
-                            <div class="product-image" style="background-image: url('${producto.imagen_url}')"></div>
+                            ${order.receipt_url ? 
+                                `<span class="view-receipt" data-url="${order.receipt_url}">Ver comprobante</span>` : 
+                                'N/A'}
                         </td>
                         <td>
-                            <strong>${producto.nombre}</strong><br>
-                            <small>${producto.descripcion.substring(0, 50)}...</small>
-                        </td>
-                        <td>$${parseFloat(producto.precio).toFixed(2)}</td>
-                        <td>${producto.categoria.charAt(0).toUpperCase() + producto.categoria.slice(1)}</td>
-                        <td>${producto.edad_max_meses} meses</td>
-                        <td>
-                            <button class="action-btn edit-btn" data-id="${producto.id}">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="action-btn delete-btn" data-id="${producto.id}">
-                                <i class="fas fa-trash"></i> Eliminar
+                            <button class="action-btn edit-btn" data-id="${order.id}">
+                                <i class="fas fa-edit"></i> Ver detalles
                             </button>
                         </td>
                     `;
-                    
-                    productsList.appendChild(row);
+                    paymentsList.appendChild(row);
                 });
                 
-                // Inicializar eventos de los botones
-                initProductEvents();
+                // Inicializar eventos
+                initPaymentEvents();
                 
             } catch (error) {
-                updateDebugInfo(`Error cargando productos: ${error.message}`);
-                console.error("Error cargando productos:", error);
-                showAlert(productsAlert, `Error cargando productos: ${error.message}`, 'error');
+                console.error('Error cargando pagos:', error);
+                alert('Error cargando pagos: ' + error.message);
             } finally {
                 hideLoading(loading);
             }
         }
         
-        // Actualizar controles de paginación
-        function updatePaginationControls() {
-            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-            prevPageBtn.disabled = currentPage <= 1;
-            nextPageBtn.disabled = currentPage >= totalPages;
-        }
-        
-        // Inicializar eventos de productos
-        function initProductEvents() {
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const productId = btn.getAttribute('data-id');
-                    updateDebugInfo(`Editando producto ID: ${productId}`);
-                    editProduct(productId);
+        // Inicializar eventos de pagos
+        function initPaymentEvents() {
+            // Ver comprobante
+            document.querySelectorAll('.view-receipt').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const receiptUrl = this.dataset.url;
+                    window.open(receiptUrl, '_blank');
                 });
             });
             
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const productId = btn.getAttribute('data-id');
-                    updateDebugInfo(`Eliminando producto ID: ${productId}`);
-                    deleteProduct(productId);
+            // Ver detalles del pedido
+            document.querySelectorAll('.edit-btn[data-id]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const orderId = this.dataset.id;
+                    showOrderDetails(orderId);
                 });
             });
         }
         
-        // Resetear formulario de producto
-        function resetProductForm() {
-            productForm.reset();
-            imagePreview.style.display = 'none';
-            urlValidation.style.display = 'none';
-            cancelEditBtn.classList.add('hidden');
-            
-            const submitBtn = productForm.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
-            submitBtn.dataset.id = '';
-            
-            currentEditId = null;
-        }
-        
-        // Agregar nuevo producto
-        productForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            updateDebugInfo('Guardando producto...');
-            
-            const name = document.getElementById('product-name').value.trim();
-            const description = document.getElementById('product-description').value.trim();
-            const price = parseFloat(document.getElementById('product-price').value);
-            const category = document.getElementById('product-category').value;
-            const age = parseInt(document.getElementById('product-age').value);
-            const imageUrl = document.getElementById('product-image').value.trim();
-            
-            // Validación de campos
-            if (!name || !description || !imageUrl) {
-                updateDebugInfo('Validación fallida: campos vacíos');
-                showAlert(addProductAlert, 'Todos los campos son obligatorios', 'error');
-                return;
-            }
-            
-            if (isNaN(price) || price <= 0) {
-                updateDebugInfo('Validación fallida: precio inválido');
-                showAlert(addProductAlert, 'Precio inválido', 'error');
-                return;
-            }
-            
-            if (isNaN(age) || age < 0 || age > 12) {
-                updateDebugInfo('Validación fallida: edad inválida');
-                showAlert(addProductAlert, 'Edad debe ser entre 0-12 meses', 'error');
-                return;
-            }
-            
-            if (!['ropa', 'pañalera', 'accesorios'].includes(category)) {
-                updateDebugInfo('Validación fallida: categoría inválida');
-                showAlert(addProductAlert, 'Categoría inválida', 'error');
-                return;
-            }
-            
-            // Validar URL de imagen
-            if (!isValidUrl(imageUrl)) {
-                updateDebugInfo('Validación fallida: URL de imagen inválida');
-                showAlert(addProductAlert, 'URL de imagen inválida', 'error');
-                return;
-            }
-            
+        // Mostrar detalles del pedido
+        async function showOrderDetails(orderId) {
             const loading = showLoading();
             
             try {
-                const productData = {
-                    nombre: name,
-                    descripcion: description,
-                    precio: price,
-                    categoria: category,
-                    edad_max_meses: age,
-                    imagen_url: imageUrl
-                };
-                
-                if (currentEditId) {
-                    // Actualizar producto existente
-                    const { error } = await supabaseClient
-                        .from('productos')
-                        .update(productData)
-                        .eq('id', currentEditId);
-                    
-                    if (error) throw error;
-                    
-                    updateDebugInfo('Producto actualizado exitosamente');
-                    showAlert(addProductAlert, 'Producto actualizado exitosamente!');
-                } else {
-                    // Crear nuevo producto
-                    const { error } = await supabaseClient
-                        .from('productos')
-                        .insert([productData]);
-                    
-                    if (error) throw error;
-                    
-                    updateDebugInfo('Producto agregado exitosamente');
-                    showAlert(addProductAlert, 'Producto agregado exitosamente!');
-                }
-                
-                // Limpiar formulario
-                resetProductForm();
-                
-                // Actualizar lista de productos
-                await loadProducts();
-                await loadDashboardData();
-                
-            } catch (error) {
-                updateDebugInfo(`Error guardando producto: ${error.message}`);
-                console.error("Error guardando producto:", error);
-                showAlert(addProductAlert, `Error al guardar producto: ${error.message}`, 'error');
-            } finally {
-                hideLoading(loading);
-            }
-        });
-        
-        // Editar producto
-        async function editProduct(id) {
-            const loading = showLoading();
-            updateDebugInfo(`Cargando producto para edición ID: ${id}`);
-            
-            try {
-                const { data: producto, error } = await supabaseClient
-                    .from('productos')
+                const { data: order, error } = await supabaseClient
+                    .from('orders')
                     .select('*')
-                    .eq('id', id)
+                    .eq('id', orderId)
                     .single();
                 
                 if (error) throw error;
                 
-                updateDebugInfo(`Producto cargado: ${producto.nombre}`);
+                // Crear modal con detalles
+                const modalContent = `
+                    <div class="order-details-modal">
+                        <h3>Detalles del Pedido #${order.id}</h3>
+                        
+                        <div class="order-info">
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Fecha:</span>
+                                <span>${new Date(order.created_at).toLocaleString()}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Total:</span>
+                                <span>$${order.total.toFixed(2)}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Método de pago:</span>
+                                <span>${order.payment_method}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Estado:</span>
+                                <span class="payment-status status-${order.status}">
+                                    ${{
+                                        'pending_verification': 'Pendiente de verificación',
+                                        'verified': 'Verificado',
+                                        'rejected': 'Rechazado'
+                                    }[order.status]}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <h4>Detalles de pago:</h4>
+                        <div class="order-details">
+                            ${order.payment_details ? 
+                                Object.entries(order.payment_details).map(([key, value]) => `
+                                    <div class="order-detail-item">
+                                        <span class="order-detail-label">${key}:</span>
+                                        <span>${value}</span>
+                                    </div>
+                                `).join('') : 
+                                '<p>No hay detalles adicionales</p>'}
+                        </div>
+                        
+                        <h4>Comprobante:</h4>
+                        ${order.receipt_url ? 
+                            `<a href="${order.receipt_url}" target="_blank" class="btn">
+                                <i class="fas fa-file-download"></i> Descargar comprobante
+                            </a>` : 
+                            '<p>No hay comprobante disponible</p>'}
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="verify-payment" data-id="${order.id}">
+                                <i class="fas fa-check"></i> Marcar como Verificado
+                            </button>
+                            <button class="btn btn-danger" id="reject-payment" data-id="${order.id}">
+                                <i class="fas fa-times"></i> Rechazar Pago
+                            </button>
+                            <button class="btn btn-outline" id="close-details">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                `;
                 
-                // Llenar formulario con datos del producto
-                document.getElementById('product-name').value = producto.nombre;
-                document.getElementById('product-description').value = producto.descripcion;
-                document.getElementById('product-price').value = producto.precio;
-                document.getElementById('product-category').value = producto.categoria;
-                document.getElementById('product-age').value = producto.edad_max_meses;
-                document.getElementById('product-image').value = producto.imagen_url;
-                previewImage(producto.imagen_url);
+                // Crear modal
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay active';
+                modal.innerHTML = `
+                    <div class="cart-modal">
+                        ${modalContent}
+                    </div>
+                `;
                 
-                // Cambiar a la pestaña de agregar producto
-                document.querySelectorAll('.admin-nav a').forEach(a => {
-                    a.classList.remove('active');
+                document.body.appendChild(modal);
+                
+                // Eventos de los botones
+                document.getElementById('verify-payment').addEventListener('click', () => {
+                    updateOrderStatus(orderId, 'verified');
                 });
-                document.querySelector('.admin-nav a[href="#agregar-producto"]').classList.add('active');
                 
-                document.querySelectorAll('.admin-section').forEach(section => {
-                    section.classList.add('hidden');
+                document.getElementById('reject-payment').addEventListener('click', () => {
+                    updateOrderStatus(orderId, 'rejected');
                 });
-                document.getElementById('agregar-producto').classList.remove('hidden');
                 
-                // Cambiar el botón de guardar para actualizar
-                const submitBtn = productForm.querySelector('button[type="submit"]');
-                submitBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar Producto';
-                
-                // Mostrar botón de cancelar
-                cancelEditBtn.classList.remove('hidden');
-                
-                // Guardar ID para actualización
-                currentEditId = id;
+                document.getElementById('close-details').addEventListener('click', () => {
+                    modal.remove();
+                });
                 
             } catch (error) {
-                updateDebugInfo(`Error obteniendo producto: ${error.message}`);
-                console.error("Error obteniendo producto:", error);
-                showAlert(addProductAlert, `Error al cargar producto: ${error.message}`, 'error');
+                console.error('Error obteniendo detalles del pedido:', error);
+                alert('Error al cargar detalles del pedido');
             } finally {
                 hideLoading(loading);
             }
         }
         
-        // Eliminar producto
-        async function deleteProduct(id) {
-            if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-                updateDebugInfo('Eliminación cancelada por el usuario');
+        // Actualizar estado del pedido
+        async function updateOrderStatus(orderId, status) {
+            if (!confirm(`¿Estás seguro de marcar este pedido como ${status === 'verified' ? 'VERIFICADO' : 'RECHAZADO'}?`)) {
                 return;
             }
             
             const loading = showLoading();
-            updateDebugInfo(`Eliminando producto ID: ${id}`);
             
             try {
                 const { error } = await supabaseClient
-                    .from('productos')
-                    .delete()
-                    .eq('id', id);
+                    .from('orders')
+                    .update({ status })
+                    .eq('id', orderId);
                 
                 if (error) throw error;
                 
-                updateDebugInfo('Producto eliminado exitosamente');
-                showAlert(productsAlert, 'Producto eliminado exitosamente!');
+                alert(`Estado del pedido #${orderId} actualizado correctamente`);
                 
-                // Actualizar lista de productos
-                await loadProducts();
-                await loadDashboardData();
+                // Recargar pagos y cerrar modal
+                loadPayments();
+                document.querySelector('.modal-overlay.active').remove();
                 
             } catch (error) {
-                updateDebugInfo(`Error eliminando producto: ${error.message}`);
-                console.error("Error eliminando producto:", error);
-                showAlert(productsAlert, `Error al eliminar producto: ${error.message}`, 'error');
+                console.error('Error actualizando estado:', error);
+                alert('Error al actualizar el estado del pedido');
             } finally {
                 hideLoading(loading);
             }
         }
         
-        // Gestión de imágenes
-        imageUploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        fileInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
+        // Actualizar paginación de pagos
+        function updatePaymentPagination() {
+            document.getElementById('payment-page-info').textContent = 
+                `Página ${currentPaymentPage} de ${totalPaymentPages}`;
             
-            // Mostrar barra de progreso
-            uploadProgress.classList.remove('hidden');
-            progressBar.style.width = '0%';
-            
-            // Subir cada archivo
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Validar tamaño de archivo
-                if (file.size > 5 * 1024 * 1024) {
-                    uploadStatus.innerHTML = `<div class="alert alert-error">${file.name} es demasiado grande (Máx. 5MB)</div>`;
-                    continue;
-                }
-                
-                // Validar tipo de archivo
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    uploadStatus.innerHTML = `<div class="alert alert-error">${file.name}: Formato no soportado</div>`;
-                    continue;
-                }
-                
-                updateDebugInfo(`Subiendo imagen: ${file.name}`);
-                
-                try {
-                    // Crear un nombre único para el archivo
-                    const fileName = `product-${Date.now()}-${file.name}`;
-                    const filePath = `${STORAGE_BUCKET}/${fileName}`;
-                    
-                    // Subir el archivo a Supabase Storage
-                    const { data, error } = await supabaseClient.storage
-                        .from(STORAGE_BUCKET)
-                        .upload(filePath, file, {
-                            cacheControl: '3600',
-                            upsert: false,
-                            onProgress: (progress) => {
-                                const percentage = Math.round(progress.loaded / progress.total * 100);
-                                progressBar.style.width = `${percentage}%`;
-                                uploadStatus.innerHTML = `<div>Subiendo ${file.name}: ${percentage}%</div>`;
-                            }
-                        });
-                    
-                    if (error) throw error;
-                    
-                    // Obtener URL pública de la imagen
-                    const { data: { publicUrl } } = supabaseClient.storage
-                        .from(STORAGE_BUCKET)
-                        .getPublicUrl(filePath);
-                    
-                    updateDebugInfo(`Imagen subida: ${publicUrl}`);
-                    
-                    // Agregar imagen al contenedor
-                    addImageToContainer(publicUrl, filePath);
-                    
-                    // Mostrar mensaje de éxito
-                    uploadStatus.innerHTML = `<div class="alert alert-success">${file.name} subida exitosamente!</div>`;
-                    
-                } catch (error) {
-                    console.error('Error subiendo imagen:', error);
-                    uploadStatus.innerHTML = `<div class="alert alert-error">Error subiendo ${file.name}: ${error.message}</div>`;
-                }
-            }
-            
-            // Ocultar barra de progreso después de 3 segundos
-            setTimeout(() => {
-                uploadProgress.classList.add('hidden');
-            }, 3000);
-        });
-        
-        // Agregar imagen al contenedor
-        function addImageToContainer(url, path) {
-            const preview = document.createElement('div');
-            preview.className = 'image-preview';
-            preview.style.backgroundImage = `url('${url}')`;
-            preview.innerHTML = `
-                <div class="delete-btn" data-path="${path}">
-                    <i class="fas fa-times"></i>
-                </div>
-            `;
-            
-            // Agregar evento para eliminar la imagen
-            preview.querySelector('.delete-btn').addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const path = e.target.closest('.delete-btn').dataset.path;
-                if (confirm('¿Eliminar esta imagen permanentemente?')) {
-                    const { error } = await supabaseClient.storage
-                        .from(STORAGE_BUCKET)
-                        .remove([path]);
-                    if (error) {
-                        alert('Error eliminando la imagen: ' + error.message);
-                    } else {
-                        preview.remove();
-                    }
-                }
-            });
-            
-            // Agregar al contenedor
-            imagesContainer.appendChild(preview);
+            document.getElementById('prev-payment-page').disabled = currentPaymentPage <= 1;
+            document.getElementById('next-payment-page').disabled = currentPaymentPage >= totalPaymentPages;
         }
         
-        // Cargar imágenes subidas
-        async function loadUploadedImages() {
-            const loading = showLoading();
-            try {
-                // Obtener lista de archivos en el bucket
-                const { data, error } = await supabaseClient.storage
-                    .from(STORAGE_BUCKET)
-                    .list();
-                
-                if (error) throw error;
-                
-                // Limpiar contenedor
-                imagesContainer.innerHTML = '';
-                
-                // Filtrar solo imágenes
-                const imageFiles = data.filter(file => 
-                    file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                );
-                
-                if (imageFiles.length === 0) {
-                    imagesContainer.innerHTML = '<p>No hay imágenes subidas aún.</p>';
-                    return;
-                }
-                
-                // Crear elementos de previsualización
-                imageFiles.forEach(file => {
-                    const filePath = `${STORAGE_BUCKET}/${file.name}`;
-                    
-                    // Obtener URL pública
-                    const { data: { publicUrl } } = supabaseClient.storage
-                        .from(STORAGE_BUCKET)
-                        .getPublicUrl(filePath);
-                    
-                    addImageToContainer(publicUrl, filePath);
-                });
-                
-            } catch (error) {
-                console.error('Error cargando imágenes:', error);
-                showAlert(uploadStatus, `Error cargando imágenes: ${error.message}`, 'error');
-            } finally {
-                hideLoading(loading);
-            }
-        }
-        
-        // Filtrar imágenes por término de búsqueda
-        function filterImages(searchTerm) {
-            const previews = document.querySelectorAll('.image-preview');
-            
-            previews.forEach(preview => {
-                const url = preview.style.backgroundImage.replace('url("', '').replace('")', '');
-                const fileName = url.substring(url.lastIndexOf('/') + 1).toLowerCase();
-                
-                if (fileName.includes(searchTerm.toLowerCase())) {
-                    preview.style.display = 'block';
-                } else {
-                    preview.style.display = 'none';
-                }
-            });
-        }
-        
-        // Permitir arrastrar y soltar imágenes
-        imageUploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            imageUploadArea.style.borderColor = '#8BD3E6';
-            imageUploadArea.style.backgroundColor = 'rgba(139, 211, 230, 0.1)';
-        });
-        
-        imageUploadArea.addEventListener('dragleave', () => {
-            imageUploadArea.style.borderColor = '#ddd';
-            imageUploadArea.style.backgroundColor = '';
-        });
-        
-        imageUploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            imageUploadArea.style.borderColor = '#ddd';
-            imageUploadArea.style.backgroundColor = '';
-            
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                fileInput.files = e.dataTransfer.files;
-                const event = new Event('change', { bubbles: true });
-                fileInput.dispatchEvent(event);
-                updateDebugInfo('Imagen arrastrada y soltada');
+        // Eventos de paginación
+        document.getElementById('prev-payment-page').addEventListener('click', () => {
+            if (currentPaymentPage > 1) {
+                currentPaymentPage--;
+                loadPayments();
             }
         });
         
-        // Comprobar sesión al cargar la página
-        async function checkAuth() {
-            const { data: { user }, error } = await supabaseClient.auth.getUser();
-            if (user) {
-                loginContainer.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-                await loadDashboardData();
-                await loadProducts();
+        document.getElementById('next-payment-page').addEventListener('click', () => {
+            if (currentPaymentPage < totalPaymentPages) {
+                currentPaymentPage++;
+                loadPayments();
             }
-        }
+        });
         
-        // Inicializar
-        checkAuth();
+        // Filtro y actualización
+        document.getElementById('payment-status-filter').addEventListener('change', () => {
+            currentPaymentPage = 1;
+            loadPayments();
+        });
+        
+        document.getElementById('refresh-payments').addEventListener('click', () => {
+            loadPayments();
+        });
+        
+        // Inicializar pagos al cargar la sección
+        document.querySelector('a[href="#gestion-pagos"]').addEventListener('click', loadPayments);
+        
+        // ... (resto del código) ...
     </script>
 </body>
 </html>
