@@ -7,92 +7,1695 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/@supabase/supabase-js"></script>
     <style>
-        /* ... (todos los estilos existentes) ... */
-
-        /* Nuevos estilos para pagos */
-        .payment-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #eee;
+        :root {
+            --primary: #FF6B8B;
+            --secondary: #8BD3E6;
+            --accent: #FFD166;
+            --light: #FFF9F5;
+            --dark: #3A405A;
+            --success: #A3D9B0;
+            --highlight: #FF9EC0;
         }
         
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+        
+        body {
+            background-color: #FFF9F5;
+            color: #3A405A;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        
+        /* Header y navegación */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 1s ease;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            color: white;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.8rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 1.1rem;
+        }
+        
+        nav a:hover, nav a:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: white;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        nav a:hover::after, nav a:focus::after {
+            width: 100%;
+        }
+        
+        .cart-icon {
+            position: relative;
+            font-size: 1.6rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background: none;
+            border: none;
+        }
+        
+        .cart-icon:hover, .cart-icon:focus {
+            transform: scale(1.1);
+            outline: none;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background: var(--accent);
+            color: var(--dark);
+            font-size: 0.9rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .admin-link {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-link:hover, .admin-link:focus {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        
+        /* Hero section */
+        .hero {
+            background: linear-gradient(rgba(58, 64, 90, 0.7), rgba(58, 64, 90, 0.7)), url('https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.3) 100%);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero h2 {
+            font-size: 3.5rem;
             margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            font-family: 'Playfair Display', serif;
+            animation: fadeIn 1.5s ease;
         }
         
-        .payment-method {
-            border: 2px solid #eee;
-            border-radius: 10px;
+        .hero p {
+            font-size: 1.8rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+            animation: fadeIn 2s ease;
+        }
+        
+        .btn {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            display: inline-block;
+            animation: fadeIn 2.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255,255,255,0.3);
+            transform: rotate(30deg);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover, .btn:focus {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            background: #ffc757;
+            outline: none;
+        }
+        
+        .btn:hover::after {
+            left: 120%;
+        }
+        
+        /* Oferta especial */
+        .special-offer {
+            background: linear-gradient(135deg, var(--highlight), var(--primary));
+            color: white;
             padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            animation: pulseBg 3s infinite;
+        }
+        
+        /* Categorías */
+        .categories {
+            padding: 4rem 5%;
+            background: white;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--dark);
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .category-card:hover, .category-card:focus-within {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .category-img {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .category-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+        }
+        
+        .category-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        
+        .category-info p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Productos con paginación */
+        .products {
+            padding: 5rem 5%;
+            background: linear-gradient(to bottom, #FFF9F5, #f0f7fa);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .products::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='1' d='M0,192L60,181.3C120,171,240,149,360,160C480,171,600,213,720,213.3C840,213,960,171,1080,170.7C1200,171,1320,213,1380,234.7L1440,256L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .product-card:hover, .product-card:focus-within {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .product-img {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+            width: 100%;
+            object-fit: cover;
+            loading: lazy;
+        }
+        
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 1.8rem;
+        }
+        
+        .product-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 1.5rem;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .old-price {
+            font-size: 1rem;
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        .product-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.2rem;
+            gap: 10px;
+        }
+        
+        .add-to-cart {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            flex: 1;
+            justify-content: center;
         }
         
-        .payment-method:hover, .payment-method.selected {
+        .add-to-cart:hover, .add-to-cart:focus {
+            background: #ff5a7f;
+            transform: scale(1.05);
+            outline: none;
+        }
+        
+        .view-details {
+            background: transparent;
+            color: var(--dark);
+            border: 2px solid #ddd;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .view-details:hover, .view-details:focus {
+            background: #f0f0f0;
             border-color: var(--primary);
-            background: rgba(255, 107, 139, 0.05);
+            color: var(--primary);
+            outline: none;
         }
         
-        .payment-method i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        /* Favoritos */
+        .favorite-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 1.2rem;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .favorite-btn:hover, .favorite-btn:focus {
+            color: var(--primary);
+            outline: none;
+        }
+        
+        .favorite-btn.active {
             color: var(--primary);
         }
         
-        .payment-details {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            background: #f9f9f9;
-            border-radius: 10px;
-            display: none;
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
         }
         
-        .payment-details.active {
-            display: block;
-        }
-        
-        .payment-instructions {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: #e3f2fd;
-            border-radius: 8px;
-        }
-        
-        .receipt-upload {
-            margin-top: 1rem;
-            padding: 1rem;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            text-align: center;
+        .page-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
         
-        .receipt-upload:hover {
-            border-color: var(--secondary);
+        .page-btn:hover, .page-btn:focus {
+            background: #6fc1d8;
+            transform: scale(1.1);
+            outline: none;
         }
         
-        .receipt-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 1rem;
-            display: none;
+        .page-btn.active {
+            background: var(--primary);
         }
         
-        .payment-confirmation {
-            margin-top: 1.5rem;
+        .page-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Sobre nosotros */
+        .about {
+            padding: 6rem 5%;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            position: relative;
+        }
+        
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFF9F5' fill-opacity='1' d='M0,96L60,112C120,128,240,160,360,170.7C480,181,600,171,720,149.3C840,128,960,96,1080,106.7C1200,117,1320,171,1380,197.3L1440,224L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+        }
+        
+        .about-img {
+            flex: 1;
+            height: 450px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .about-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,107,139,0.1), rgba(139,211,230,0.1));
+        }
+        
+        .about-content {
+            flex: 1;
+        }
+        
+        .about-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.8rem;
+            color: var(--dark);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .about-content p {
+            margin-bottom: 1.8rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        /* Testimonios */
+        .testimonials {
+            padding: 5rem 5%;
+            background: linear-gradient(to bottom, #f0f7fa, #FFF9F5);
+            text-align: center;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .testimonial-card:hover, .testimonial-card:focus-within {
+            transform: translateY(-10px);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: var(--primary);
+            opacity: 0.1;
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .author-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-size: cover;
+            border: 3px solid var(--primary);
+        }
+        
+        .author-info h4 {
+            color: var(--dark);
+        }
+        
+        .author-info p {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* Contacto */
+        .contact-section {
+            padding: 5rem 5%;
+            background: white;
+            text-align: center;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .contact-item {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover, .contact-item:focus-within {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .contact-item i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .contact-item p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        
+        .contact-item a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item a:hover, .contact-item a:focus {
+            color: var(--secondary);
+            text-decoration: underline;
+            outline: none;
+        }
+        
+        /* Newsletter */
+        .newsletter {
+            padding: 4rem 5%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            text-align: center;
+            color: white;
+        }
+        
+        .newsletter h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .newsletter p {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-size: 1.2rem;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 10px;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
             padding: 1rem;
-            background: #e8f5e9;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+        }
+        
+        .newsletter-form input:focus {
+            outline: 2px solid var(--accent);
+        }
+        
+        .newsletter-form button {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .newsletter-form button:hover, .newsletter-form button:focus {
+            background: #ffc757;
+            transform: scale(1.05);
+            outline: none;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 5% 2rem;
+            position: relative;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 1.8rem;
+            font-size: 1.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column a:hover, .footer-column a:focus {
+            color: var(--primary);
+            transform: translateX(5px);
+            outline: none;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .social-icons a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+        
+        .social-icons a:hover, .social-icons a:focus {
+            background: var(--primary);
+            transform: translateY(-5px);
+            outline: none;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 3rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        /* Barra de redes sociales flotante */
+        .social-media-bar {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50% 0 0 50%;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            transform: translateX(30px);
+            text-decoration: none;
+        }
+        
+        .social-icon:hover, .social-icon:focus {
+            transform: translateX(0);
+            outline: none;
+        }
+        
+        .facebook-bg {
+            background: #1877F2;
+        }
+        
+        .instagram-bg {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+        
+        .tiktok-bg {
+            background: #000000;
+        }
+        
+        .whatsapp-bg {
+            background: #25D366;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .contact-card {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .contact-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .contact-card h4 {
+            margin-bottom: 10px;
+        }
+        
+        .contact-card a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .contact-card a:hover, .contact-card a:focus {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+        }
+        
+        /* Badge flotante de WhatsApp */
+        .floating-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 99;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .floating-badge:focus {
+            outline: 2px solid var(--accent);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes pulseBg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Responsividad mejorada */
+        @media (max-width: 1200px) {
+            .hero h2 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.6rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .about {
+                flex-direction: column;
+            }
+            
+            .about-img {
+                width: 100%;
+                margin-bottom: 2rem;
+            }
+            
+            .social-media-bar {
+                display: none;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1.2rem;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+            
+            .add-to-cart, .view-details {
+                width: 100%;
+            }
+            
+            .hero {
+                height: 70vh;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero {
+                height: 60vh;
+            }
+            
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .pagination {
+                gap: 0.5rem;
+            }
+            
+            .page-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Mejoras de accesibilidad */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* Modal de carrito */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .cart-modal {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .cart-modal {
+            transform: translateY(0);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .cart-item-img {
+            width: 80px;
+            height: 80px;
             border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+            margin-right: 1rem;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .quantity-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .quantity-value {
+            margin: 0 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .cart-summary {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cart-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+        
+        /* Filtros */
+        .products-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            padding-left: 40px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        /* Paginación mejorada */
+        .pagination-info {
+            text-align: center;
+            margin-top: 1rem;
+            color: #777;
+        }
+
+        /* Efectos de carga */
+        .skeleton-loader {
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Mejoras de validación */
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 5px;
             display: none;
+        }
+
+        /* Mensajes de estado */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .success {
+            background-color: rgba(163, 217, 176, 0.3);
+            border: 1px solid var(--success);
+            color: #2e7d32;
+        }
+
+        .error {
+            background-color: rgba(255, 107, 139, 0.3);
+            border: 1px solid var(--primary);
+            color: #c62828;
         }
     </style>
 </head>
 <body>
-    <!-- ... (todo el contenido existente) ... -->
+    <!-- Enlace para saltar navegación (accesibilidad) -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <!-- Barra de redes sociales flotante -->
+    <div class="social-media-bar">
+        <a href="https://www.facebook.com/profile.php?id=61579349372708" class="social-icon facebook-bg" target="_blank" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.instagram.com/pequethobias/" class="social-icon instagram-bg" target="_blank" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.tiktok.com/@pequethobias" class="social-icon tiktok-bg" target="_blank" aria-label="TikTok">
+            <i class="fab fa-tiktok"></i>
+        </a>
+        <a href="https://wa.me/584127430912" class="social-icon whatsapp-bg" target="_blank" aria-label="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Header con navegación -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-baby" aria-hidden="true"></i>
+            <h1>PEQUETHOBIAS</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#categorias">Categorías</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="admin.html" class="admin-link">
+                    <i class="fas fa-lock" aria-hidden="true"></i> Admin
+                </a></li>
+            </ul>
+        </nav>
+        <button class="cart-icon" aria-label="Carrito de compras" id="open-cart">
+            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+            <span class="cart-count">0</span>
+        </button>
+    </header>
+
+    <!-- Oferta especial -->
+    <div class="special-offer">
+        🎉 ¡ENVÍO GRATIS EN COMPRAS SUPERIORES A $50! 🎉
+    </div>
+
+    <!-- Sección Hero -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h2>Lo mejor para tu pequeño tesoro</h2>
+            <p>Ropa, pañaleras y accesorios premium para bebés de 0 a 12 meses</p>
+            <a href="#productos" class="btn">Descubrir Colección</a>
+        </div>
+    </section>
+
+    <!-- Categorías -->
+    <section class="categories" id="categorias">
+        <h2 class="section-title">Nuestras Categorías</h2>
+        <div class="categories-grid">
+            <div class="category-card">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1591348131719-8c1a7b8f2b86?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Ropa para recién nacidos">
+                    <div class="category-overlay">
+                        <div class="category-info">
+                            <h3>Ropa para Recién Nacidos</h3>
+                            <p>Suavidad y confort para pieles sensibles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="category-card">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1590005024862-6b67679a29fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Pañaleras">
+                    <div class="category-overlay">
+                        <div class="category-info">
+                            <h3>Pañaleras</h3>
+                            <p>Prácticas, funcionales y con estilo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="category-card">
+                <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1576201830636-9034d8d3983c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');" role="img" aria-label="Accesorios">
+                    <div class="category-overlay">
+                        <div class="category-info">
+                            <h3>Accesorios</h3>
+                            <p>Todo lo esencial para tu bebé</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Productos con paginación -->
+    <section class="products" id="productos">
+        <h2 class="section-title">Productos Destacados</h2>
+        
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-input" class="search-input" placeholder="Buscar productos..." aria-label="Buscar productos">
+        </div>
+        
+        <div class="products-filters">
+            <button class="filter-btn active" data-category="all">Todos</button>
+            <button class="filter-btn" data-category="ropa">Ropa</button>
+            <button class="filter-btn" data-category="pañalera">Pañaleras</button>
+            <button class="filter-btn" data-category="accesorios">Accesorios</button>
+        </div>
+        
+        <div class="products-grid" id="productos-container">
+            <!-- Los productos se cargarán aquí con JavaScript -->
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
+            <div class="skeleton-loader" style="height: 400px;"></div>
+        </div>
+        
+        <!-- Controles de paginación -->
+        <div class="pagination" id="pagination-controls">
+            <button class="page-btn prev-btn" disabled aria-label="Página anterior">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn next-btn" aria-label="Página siguiente">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <div class="pagination-info" id="pagination-info">
+            Mostrando página 1 de 1
+        </div>
+    </section>
+
+    <!-- Sobre Nosotros -->
+    <section class="about" id="nosotros">
+        <div class="about-img" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');" role="img" aria-label="Sobre PEQUETHOBIAS"></div>
+        <div class="about-content">
+            <h2>Sobre PEQUETHOBIAS</h2>
+            <p>En PEQUETHOBIAS nos dedicamos a ofrecer productos de la más alta calidad para los más pequeños. Cada prenda y accesorio ha sido cuidadosamente seleccionado pensando en la comodidad, seguridad y bienestar de tu bebé.</p>
+            <p>Utilizamos tejidos orgánicos, hipoalergénicos y respetuosos con la piel de tu bebé, combinando funcionalidad con diseños modernos y encantadores.</p>
+            <p>Nuestra misión es acompañarte en esta etapa tan especial, proporcionándote productos que harán la vida más fácil y feliz para ti y tu pequeño.</p>
+            <a href="#contacto" class="btn">Conoce Nuestra Historia</a>
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="testimonials">
+        <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "La calidad de las prendas es excepcional. Mi bebé está siempre cómodo y las prendas resisten perfectamente los lavados. ¡Recomendado 100%!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/32.jpg');" role="img" aria-label="María López"></div>
+                    <div class="author-info">
+                        <h4>María López</h4>
+                        <p>Madre de gemelos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "La pañalera que compré es práctica, espaciosa y con un diseño precioso. Ahora salir con mi bebé es mucho más fácil y organizado."
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');" role="img" aria-label="Ana Martínez"></div>
+                    <div class="author-info">
+                        <h4>Ana Martínez</h4>
+                        <p>Mamá primeriza</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    "Excelente atención al cliente y productos de primera calidad. Cada compra ha sido una experiencia maravillosa. ¡Volveré a comprar sin duda!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-img" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');" role="img" aria-label="Laura González"></div>
+                    <div class="author-info">
+                        <h4>Laura González</h4>
+                        <p>Clienta frecuente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="contact-section" id="contacto">
+        <h2 class="section-title">Contáctanos</h2>
+        <p>Estamos aquí para ayudarte en todo lo que necesites para tu bebé</p>
+        
+        <div class="contact-grid">
+            <div class="contact-item">
+                <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+                <h3>Facebook</h3>
+                <p>Síguenos para ver nuestras novedades</p>
+                <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-instagram" aria-hidden="true"></i>
+                <h3>Instagram</h3>
+                <p>Descubre nuestros productos en imágenes</p>
+                <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-tiktok" aria-hidden="true"></i>
+                <h3>TikTok</h3>
+                <p>Mira nuestros videos y consejos</p>
+                <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                <h3>WhatsApp</h3>
+                <p>Chatea directamente con nosotros</p>
+                <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter con suscripción real -->
+    <section class="newsletter" id="newsletter">
+        <h2>Únete a nuestra comunidad</h2>
+        <p>Recibe ofertas exclusivas, novedades y consejos para el cuidado de tu bebé</p>
+        <form class="newsletter-form" id="newsletter-form">
+            <input type="email" id="newsletter-email" placeholder="Tu correo electrónico" required aria-label="Correo electrónico para newsletter">
+            <button type="submit">Suscribirme</button>
+        </form>
+        <div id="newsletter-message" class="status-message" style="display: none;"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>PEQUETHOBIAS</h3>
+                <p>Tu tienda especializada en productos premium para bebés de 0 a 12 meses. Calidad, seguridad y estilo para los más pequeños.</p>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/pequethobias/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@pequethobias" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/584127430912" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#inicio">Inicio</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#categorias">Categorías</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#productos">Productos</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="#nosotros">Sobre Nosotros</a></li>
+                    <li><i class="fas fa-chevron-right" aria-hidden="true"></i><a href="admin.html">Panel Admin</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contacto</h3>
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <i class="fab fa-facebook-messenger" aria-hidden="true"></i>
+                        <h4>Facebook</h4>
+                        <a href="https://www.facebook.com/profile.php?id=61579349372708" target="_blank">Ver perfil</a>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fab fa-instagram" aria-hidden="true"></i>
+                        <h4>Instagram</h4>
+                        <a href="https://www.instagram.com/pequethobias/" target="_blank">Seguir cuenta</a>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fab fa-tiktok" aria-hidden="true"></i>
+                        <h4>TikTok</h4>
+                        <a href="https://www.tiktok.com/@pequethobias" target="_blank">Ver videos</a>
+                    </div>
+                    <div class="contact-card">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                        <h4>WhatsApp</h4>
+                        <a href="https://wa.me/584127430912" target="_blank">+58 412 7430912</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 PEQUETHOBIAS. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Badge flotante de WhatsApp -->
+    <button class="floating-badge" onclick="window.open('https://wa.me/584127430912', '_blank')" aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </button>
 
     <!-- Modal de carrito -->
     <div class="modal-overlay" id="cart-modal">
@@ -110,42 +1713,6 @@
                 <div class="cart-total">
                     <span>Total:</span>
                     <span>$<span id="cart-total">0.00</span></span>
-                </div>
-                
-                <!-- Sección de pagos -->
-                <div class="payment-section">
-                    <h3>Método de Pago</h3>
-                    
-                    <div class="payment-methods">
-                        <div class="payment-method" data-method="pago_movil">
-                            <i class="fas fa-mobile-alt"></i>
-                            <h4>Pago Móvil</h4>
-                            <p>Venezuela</p>
-                        </div>
-                        
-                        <div class="payment-method" data-method="transferencia">
-                            <i class="fas fa-university"></i>
-                            <h4>Transferencia</h4>
-                            <p>Bancaria</p>
-                        </div>
-                        
-                        <div class="payment-method" data-method="zinli">
-                            <i class="fas fa-wallet"></i>
-                            <h4>Zinli</h4>
-                            <p>Billetera digital</p>
-                        </div>
-                        
-                        <div class="payment-method" data-method="kontigo">
-                            <i class="fas fa-credit-card"></i>
-                            <h4>Kontigo</h4>
-                            <p>Tarjeta prepago</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Detalles de cada método de pago -->
-                    <div id="payment-details-container">
-                        <!-- Los detalles se cargarán dinámicamente -->
-                    </div>
                 </div>
                 
                 <div class="cart-buttons">
@@ -173,349 +1740,626 @@
         let currentCategory = 'all';
         let currentSearchTerm = '';
 
-        // ... (funciones existentes) ...
-
-        // Métodos de pago con sus detalles e instrucciones
-        const paymentMethods = {
-            pago_movil: {
-                title: "Pago Móvil",
-                instructions: `
-                    <div class="payment-instructions">
-                        <h4>Instrucciones para Pago Móvil:</h4>
-                        <ol>
-                            <li>Registra en tu banca móvil el siguiente número: <strong>0412-7430912</strong></li>
-                            <li>Cédula: <strong>V-12345678</strong></li>
-                            <li>Banco: <strong>Banesco</strong></li>
-                            <li>Monto: <span class="payment-amount">$${total.toFixed(2)}</span></li>
-                            <li>Envía el comprobante de pago</li>
-                        </ol>
-                    </div>
-                `,
-                fields: `
-                    <div class="form-group">
-                        <label for="pm-phone">Teléfono:</label>
-                        <input type="tel" id="pm-phone" class="form-control" placeholder="0412-1234567" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="pm-id">Cédula:</label>
-                        <input type="text" id="pm-id" class="form-control" placeholder="V-12345678" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="pm-bank">Banco:</label>
-                        <select id="pm-bank" class="form-control" required>
-                            <option value="">Selecciona un banco</option>
-                            <option value="banesco">Banesco</option>
-                            <option value="provincial">Provincial</option>
-                            <option value="mercantil">Mercantil</option>
-                            <option value="venezuela">Banco de Venezuela</option>
-                        </select>
-                    </div>
-                `
-            },
-            transferencia: {
-                title: "Transferencia Bancaria",
-                instructions: `
-                    <div class="payment-instructions">
-                        <h4>Instrucciones para Transferencia:</h4>
-                        <ol>
-                            <li>Realiza una transferencia a nuestra cuenta bancaria</li>
-                            <li>Banco: <strong>Banesco</strong></li>
-                            <li>Tipo de cuenta: <strong>Corriente</strong></li>
-                            <li>Número: <strong>0134-1234-1234-1234</strong></li>
-                            <li>Titular: <strong>PEQUETHOBIAS C.A.</strong></li>
-                            <li>RIF: <strong>J-123456789</strong></li>
-                            <li>Monto: <span class="payment-amount">$${total.toFixed(2)}</span></li>
-                            <li>Envía el comprobante de transferencia</li>
-                        </ol>
-                    </div>
-                `,
-                fields: `
-                    <div class="form-group">
-                        <label for="tf-bank">Banco Origen:</label>
-                        <select id="tf-bank" class="form-control" required>
-                            <option value="">Selecciona tu banco</option>
-                            <option value="banesco">Banesco</option>
-                            <option value="provincial">Provincial</option>
-                            <option value="mercantil">Mercantil</option>
-                            <option value="venezuela">Banco de Venezuela</option>
-                            <option value="otro">Otro</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="tf-ref">Número de Referencia:</label>
-                        <input type="text" id="tf-ref" class="form-control" placeholder="123456789" required>
-                    </div>
-                `
-            },
-            zinli: {
-                title: "Zinli",
-                instructions: `
-                    <div class="payment-instructions">
-                        <h4>Instrucciones para Zinli:</h4>
-                        <ol>
-                            <li>Envía el pago a nuestro correo: <strong>pequethobias@zinli.com</strong></li>
-                            <li>Monto: <span class="payment-amount">$${total.toFixed(2)}</span></li>
-                            <li>Envía el comprobante de la transacción</li>
-                        </ol>
-                    </div>
-                `,
-                fields: `
-                    <div class="form-group">
-                        <label for="zl-email">Tu correo de Zinli:</label>
-                        <input type="email" id="zl-email" class="form-control" placeholder="tucorreo@example.com" required>
-                    </div>
-                `
-            },
-            kontigo: {
-                title: "Kontigo",
-                instructions: `
-                    <div class="payment-instructions">
-                        <h4>Instrucciones para Kontigo:</h4>
-                        <ol>
-                            <li>Realiza el pago a nuestro número de tarjeta</li>
-                            <li>Tarjeta: <strong>1234 5678 9012 3456</strong></li>
-                            <li>Titular: <strong>PEQUETHOBIAS C.A.</strong></li>
-                            <li>Monto: <span class="payment-amount">$${total.toFixed(2)}</span></li>
-                            <li>Envía el comprobante de la transacción</li>
-                        </ol>
-                    </div>
-                `,
-                fields: `
-                    <div class="form-group">
-                        <label for="kg-phone">Teléfono asociado a Kontigo:</label>
-                        <input type="tel" id="kg-phone" class="form-control" placeholder="0412-1234567" required>
-                    </div>
-                `
+        // Función para cargar productos con paginación
+        async function loadProducts(page = 1) {
+            const loading = document.createElement('div');
+            loading.innerHTML = '<p>Cargando productos...</p>';
+            document.getElementById('productos-container').innerHTML = '';
+            document.getElementById('productos-container').appendChild(loading);
+            
+            try {
+                let query = supabase
+                    .from('productos')
+                    .select('*')
+                    .lte('edad_max_meses', 12); // Solo productos para bebés de hasta 12 meses
+                
+                // Aplicar filtro de categoría si es necesario
+                if (currentCategory !== 'all') {
+                    query = query.eq('categoria', currentCategory);
+                }
+                
+                // Aplicar búsqueda si existe
+                if (currentSearchTerm) {
+                    query = query.or(`nombre.ilike.%${currentSearchTerm}%,descripcion.ilike.%${currentSearchTerm}%`);
+                }
+                
+                const { data: productos, error } = await query;
+                
+                if (error) {
+                    console.error('Error cargando productos:', error);
+                    loadSampleProducts(page);
+                    return;
+                }
+                
+                // Si no hay productos, cargar ejemplos
+                if (productos.length === 0) {
+                    loadSampleProducts(page);
+                    return;
+                }
+                
+                allProducts = productos;
+                displayProducts(page);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadSampleProducts(page);
             }
-        };
-
-        // Selección de método de pago
-        document.querySelectorAll('.payment-method').forEach(method => {
-            method.addEventListener('click', function() {
-                // Deseleccionar todos
-                document.querySelectorAll('.payment-method').forEach(m => {
-                    m.classList.remove('selected');
-                });
+        }
+        
+        // Función para mostrar productos con paginación
+        function displayProducts(page) {
+            const container = document.getElementById('productos-container');
+            container.innerHTML = '';
+            
+            const startIndex = (page - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const productsToShow = allProducts.slice(startIndex, endIndex);
+            
+            if (productsToShow.length === 0) {
+                container.innerHTML = '<p class="status-message">No se encontraron productos</p>';
+                return;
+            }
+            
+            productsToShow.forEach(producto => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.tabIndex = 0; // Hacemos el card enfocable para accesibilidad
                 
-                // Seleccionar el actual
-                this.classList.add('selected');
+                let badge = '';
+                if (producto.categoria === 'ropa') {
+                    badge = '<div class="product-badge">ROPA</div>';
+                } else if (producto.categoria === 'pañalera') {
+                    badge = '<div class="product-badge" style="background: var(--secondary);">PAÑALERA</div>';
+                } else if (producto.categoria === 'accesorios') {
+                    badge = '<div class="product-badge" style="background: var(--accent); color: var(--dark);">ACCESORIOS</div>';
+                }
                 
-                const methodType = this.dataset.method;
-                const paymentDetails = paymentMethods[methodType];
-                const total = parseFloat(document.getElementById('cart-total').textContent);
+                // Comprobar si es favorito
+                const isFavorite = favorites.includes(producto.id.toString());
                 
-                // Actualizar el monto en las instrucciones
-                let instructions = paymentDetails.instructions.replace(
-                    /\${total\.toFixed\(2\)}/g, 
-                    total.toFixed(2)
-                );
+                // Precio con descuento (20% menos)
+                const precioOriginal = parseFloat(producto.precio);
+                const precioDescuento = precioOriginal * 0.8;
                 
-                // Mostrar detalles
-                document.getElementById('payment-details-container').innerHTML = `
-                    <h4>${paymentDetails.title}</h4>
-                    ${instructions}
-                    <div class="payment-fields">
-                        ${paymentDetails.fields}
-                        <div class="receipt-upload" id="receipt-upload">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Haz clic o arrastra aquí el comprobante de pago</p>
-                            <p><small>Formatos: JPG, PNG, PDF (Máx. 5MB)</small></p>
-                            <input type="file" id="payment-receipt" accept="image/*,.pdf" style="display: none;">
-                            <img class="receipt-preview" id="receipt-preview">
+                productCard.innerHTML = `
+                    ${badge}
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${producto.id}" aria-label="${isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}">
+                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                    <img class="product-img" src="${producto.imagen_url}" alt="${producto.nombre}" loading="lazy">
+                    <div class="product-info">
+                        <h3>${producto.nombre}</h3>
+                        <p>${producto.descripcion}</p>
+                        <div class="product-price">
+                            <span class="old-price">$${precioOriginal.toFixed(2)}</span>
+                            <span>$${precioDescuento.toFixed(2)}</span>
                         </div>
-                    </div>
-                    <div class="payment-confirmation" id="payment-confirmation">
-                        <i class="fas fa-check-circle"></i>
-                        <p>Comprobante cargado correctamente</p>
+                        <p><small>Edad máxima: ${producto.edad_max_meses} meses</small></p>
+                        <div class="product-actions">
+                            <button class="add-to-cart" data-id="${producto.id}">
+                                <i class="fas fa-cart-plus"></i> Añadir
+                            </button>
+                            <button class="view-details">Ver detalles</button>
+                        </div>
                     </div>
                 `;
                 
-                // Inicializar subida de comprobante
-                initReceiptUpload();
-            });
-        });
-        
-        // Inicializar subida de comprobante
-        function initReceiptUpload() {
-            const receiptUpload = document.getElementById('receipt-upload');
-            const receiptInput = document.getElementById('payment-receipt');
-            const receiptPreview = document.getElementById('receipt-preview');
-            const paymentConfirmation = document.getElementById('payment-confirmation');
-            
-            if (!receiptUpload) return;
-            
-            receiptUpload.addEventListener('click', () => {
-                receiptInput.click();
+                container.appendChild(productCard);
             });
             
-            receiptInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const file = this.files[0];
-                    
-                    // Validar tamaño
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('El archivo es demasiado grande (Máx. 5MB)');
-                        return;
-                    }
-                    
-                    // Validar tipo
-                    const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-                    if (!validTypes.includes(file.type)) {
-                        alert('Formato no válido. Use JPG, PNG o PDF');
-                        return;
-                    }
-                    
-                    // Mostrar previsualización si es imagen
-                    if (file.type.includes('image')) {
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            receiptPreview.src = e.target.result;
-                            receiptPreview.style.display = 'block';
-                        }
-                        
-                        reader.readAsDataURL(file);
-                    }
-                    
-                    // Mostrar confirmación
-                    paymentConfirmation.style.display = 'block';
-                    
-                    // Ocultar mensaje de subida
-                    receiptUpload.querySelector('p').style.display = 'none';
-                }
+            // Actualizar controles de paginación
+            updatePaginationControls();
+            
+            // Agregar event listeners
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
             });
             
-            // Permitir arrastrar y soltar
-            receiptUpload.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                receiptUpload.style.borderColor = '#8BD3E6';
-                receiptUpload.style.backgroundColor = 'rgba(139, 211, 230, 0.1)';
-            });
-            
-            receiptUpload.addEventListener('dragleave', () => {
-                receiptUpload.style.borderColor = '#ddd';
-                receiptUpload.style.backgroundColor = '';
-            });
-            
-            receiptUpload.addEventListener('drop', (e) => {
-                e.preventDefault();
-                receiptUpload.style.borderColor = '#ddd';
-                receiptUpload.style.backgroundColor = '';
-                
-                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                    receiptInput.files = e.dataTransfer.files;
-                    const event = new Event('change', { bubbles: true });
-                    receiptInput.dispatchEvent(event);
-                }
+            document.querySelectorAll('.favorite-btn').forEach(button => {
+                button.addEventListener('click', toggleFavorite);
             });
         }
         
-        // Finalizar compra con verificación manual
-        document.getElementById('checkout').addEventListener('click', async function() {
-            const selectedMethod = document.querySelector('.payment-method.selected');
+        // Función para actualizar controles de paginación
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(allProducts.length / productsPerPage);
+            const paginationContainer = document.getElementById('pagination-controls');
+            paginationContainer.innerHTML = '';
             
-            if (!selectedMethod) {
-                alert('Por favor selecciona un método de pago');
+            // Botón anterior
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn prev-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.setAttribute('aria-label', 'Página anterior');
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayProducts(currentPage);
+                    updatePaginationInfo();
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+            
+            // Botones de página
+            const startPage = Math.max(1, currentPage - 1);
+            const endPage = Math.min(totalPages, currentPage + 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    displayProducts(currentPage);
+                    updatePaginationInfo();
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
+            
+            // Botón siguiente
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn next-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.setAttribute('aria-label', 'Página siguiente');
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayProducts(currentPage);
+                    updatePaginationInfo();
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
+            
+            // Actualizar información de paginación
+            updatePaginationInfo();
+        }
+        
+        function updatePaginationInfo() {
+            const totalPages = Math.ceil(allProducts.length / productsPerPage);
+            const paginationInfo = document.getElementById('pagination-info');
+            paginationInfo.textContent = `Mostrando página ${currentPage} de ${totalPages}`;
+        }
+        
+        // Función para cargar productos de ejemplo
+        function loadSampleProducts(page = 1) {
+            const productos = [
+                {
+                    id: 1,
+                    nombre: "Body de Algodón Orgánico",
+                    descripcion: "Suave y cómodo para recién nacidos, ideal para pieles sensibles",
+                    precio: 15.99,
+                    categoria: "ropa",
+                    edad_max_meses: 3,
+                    imagen_url: "https://images.unsplash.com/photo-1591348278999-ee1cbfb55e8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 2,
+                    nombre: "Pañalera Premium",
+                    descripcion: "Con organizador y cambiador integrado, múltiples compartimentos",
+                    precio: 59.99,
+                    categoria: "pañalera",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1616628188540-22268d8b7f7c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 3,
+                    nombre: "Conjunto de Verano",
+                    descripcion: "Ligero y fresco, perfecto para los días cálidos",
+                    precio: 24.99,
+                    categoria: "ropa",
+                    edad_max_meses: 6,
+                    imagen_url: "https://images.unsplash.com/photo-1595263181679-4d35d9b1a0e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 4,
+                    nombre: "Set de Baño",
+                    descripcion: "Toalla con capucha y manopla de baño en algodón absorbente",
+                    precio: 29.99,
+                    categoria: "accesorios",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1601924638867-2c4af4a3a08f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 5,
+                    nombre: "Manta de Algodón",
+                    descripcion: "Suave y cálida para mantener a tu bebé cómodo",
+                    precio: 34.99,
+                    categoria: "ropa",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1563341591-2eab74d8c1d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 6,
+                    nombre: "Gorro y Manoplas",
+                    descripcion: "Set para proteger a tu bebé del frío",
+                    precio: 19.99,
+                    categoria: "ropa",
+                    edad_max_meses: 6,
+                    imagen_url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 7,
+                    nombre: "Babero Absorbente",
+                    descripcion: "Ideal para la hora de comer, fácil de limpiar",
+                    precio: 9.99,
+                    categoria: "accesorios",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1615485925690-1d0ae5b8d7b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    id: 8,
+                    nombre: "Saco Dormir",
+                    descripcion: "Para que tu bebé duerma seguro y cómodo",
+                    precio: 39.99,
+                    categoria: "ropa",
+                    edad_max_meses: 12,
+                    imagen_url: "https://images.unsplash.com/photo-1584824374895-5f4b1a1b0b0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                }
+            ];
+            
+            allProducts = productos;
+            displayProducts(page);
+        }
+        
+        // Carrito de compras
+        function addToCart(e) {
+            const productId = parseInt(e.target.closest('.add-to-cart').dataset.id);
+            
+            // Buscar si el producto ya está en el carrito
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            
+            // Animación de confirmación
+            const button = e.target.closest('.add-to-cart');
+            button.innerHTML = '<i class="fas fa-check"></i> Añadido';
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-cart-plus"></i> Añadir';
+            }, 1500);
+            
+            // Trackeo de evento
+            trackEvent('add_to_cart', {
+                item_id: productId,
+                value: 1
+            });
+        }
+        
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.querySelector('.cart-count').textContent = totalItems;
+            document.querySelector('.cart-count').style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                document.querySelector('.cart-count').style.transform = 'scale(1)';
+            }, 300);
+        }
+        
+        // Sistema de favoritos
+        function toggleFavorite(e) {
+            const button = e.target.closest('.favorite-btn');
+            const productId = button.dataset.id;
+            
+            if (favorites.includes(productId)) {
+                // Eliminar de favoritos
+                favorites = favorites.filter(id => id !== productId);
+                button.classList.remove('active');
+                button.innerHTML = '<i class="far fa-heart"></i>';
+                button.setAttribute('aria-label', 'Añadir a favoritos');
+            } else {
+                // Añadir a favoritos
+                favorites.push(productId);
+                button.classList.add('active');
+                button.innerHTML = '<i class="fas fa-heart"></i>';
+                button.setAttribute('aria-label', 'Quitar de favoritos');
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // Trackeo de evento
+            trackEvent('favorite_toggle', {
+                item_id: productId,
+                action: favorites.includes(productId) ? 'add' : 'remove'
+            });
+        }
+        
+        // Suscripción al newsletter
+        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('newsletter-email');
+            const email = emailInput.value.trim();
+            const messageElement = document.getElementById('newsletter-message');
+            
+            // Validar email
+            if (!validateEmail(email)) {
+                messageElement.textContent = 'Por favor, introduce un correo electrónico válido.';
+                messageElement.className = 'status-message error';
+                messageElement.style.display = 'block';
                 return;
             }
             
-            const paymentMethod = selectedMethod.dataset.method;
-            const receiptInput = document.getElementById('payment-receipt');
+            try {
+                // Guardar en Supabase
+                const { data, error } = await supabase
+                    .from('suscriptores')
+                    .insert([{ email: email }]);
+                
+                if (error) throw error;
+                
+                // Mostrar mensaje de éxito
+                messageElement.textContent = '¡Gracias por suscribirte! Pronto recibirás nuestras novedades.';
+                messageElement.className = 'status-message success';
+                messageElement.style.display = 'block';
+                
+                // Trackeo de evento
+                trackEvent('newsletter_signup', {
+                    email: email
+                });
+                
+                // Limpiar formulario
+                emailInput.value = '';
+                
+            } catch (error) {
+                console.error('Error al suscribir:', error);
+                messageElement.textContent = 'Ocurrió un error. Por favor, intenta de nuevo más tarde.';
+                messageElement.className = 'status-message error';
+                messageElement.style.display = 'block';
+            }
+        });
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // Búsqueda de productos
+        document.getElementById('search-input').addEventListener('input', function() {
+            currentSearchTerm = this.value.trim().toLowerCase();
+            currentPage = 1;
+            loadProducts();
+        });
+        
+        // Filtrado por categoría
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Actualizar botones activos
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentCategory = this.dataset.category;
+                currentPage = 1;
+                loadProducts();
+                
+                // Trackeo de evento
+                trackEvent('filter_products', {
+                    category: currentCategory
+                });
+            });
+        });
+        
+        // Funcionalidad del carrito
+        const cartModal = document.getElementById('cart-modal');
+        const openCartBtn = document.getElementById('open-cart');
+        const closeCartBtn = document.getElementById('close-cart');
+        const continueShoppingBtn = document.getElementById('continue-shopping');
+        
+        openCartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        continueShoppingBtn.addEventListener('click', closeCart);
+        
+        function openCart() {
+            cartModal.classList.add('active');
+            renderCartItems();
             
-            if (!receiptInput || !receiptInput.files[0]) {
-                alert('Por favor sube el comprobante de pago');
+            // Trackeo de evento
+            trackEvent('view_cart');
+        }
+        
+        function closeCart() {
+            cartModal.classList.remove('active');
+        }
+        
+        function renderCartItems() {
+            const container = document.getElementById('cart-items');
+            const totalElement = document.getElementById('cart-total');
+            
+            container.innerHTML = '';
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="empty-cart"><p>Tu carrito está vacío</p></div>';
+                totalElement.textContent = '0.00';
                 return;
             }
             
-            const receiptFile = receiptInput.files[0];
-            const total = parseFloat(document.getElementById('cart-total').textContent);
+            let total = 0;
             
-            // Recolectar datos específicos del método
-            let paymentDetails = {};
-            switch (paymentMethod) {
-                case 'pago_movil':
-                    paymentDetails = {
-                        telefono: document.getElementById('pm-phone').value,
-                        cedula: document.getElementById('pm-id').value,
-                        banco: document.getElementById('pm-bank').value
-                    };
-                    break;
-                case 'transferencia':
-                    paymentDetails = {
-                        banco_origen: document.getElementById('tf-bank').value,
-                        referencia: document.getElementById('tf-ref').value
-                    };
-                    break;
-                case 'zinli':
-                    paymentDetails = {
-                        email: document.getElementById('zl-email').value
-                    };
-                    break;
-                case 'kontigo':
-                    paymentDetails = {
-                        telefono: document.getElementById('kg-phone').value
-                    };
-                    break;
-            }
+            cart.forEach(item => {
+                const product = allProducts.find(p => p.id === item.id);
+                if (product) {
+                    const precio = parseFloat(product.precio) * 0.8; // Precio con descuento
+                    const subtotal = precio * item.quantity;
+                    total += subtotal;
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div class="cart-item-img" style="background-image: url('${product.imagen_url}')"></div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">${product.nombre}</div>
+                            <div class="cart-item-price">$${precio.toFixed(2)}</div>
+                            <div class="cart-item-quantity">
+                                <button class="quantity-btn decrease" data-id="${product.id}">-</button>
+                                <span class="quantity-value">${item.quantity}</span>
+                                <button class="quantity-btn increase" data-id="${product.id}">+</button>
+                            </div>
+                        </div>
+                        <button class="cart-item-remove" data-id="${product.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    
+                    container.appendChild(cartItem);
+                }
+            });
             
-            // Subir el comprobante
-            const receiptFileName = `receipt_${Date.now()}_${receiptFile.name}`;
-            const { data: receiptData, error: receiptError } = await supabase
-                .storage
-                .from('payment-receipts')
-                .upload(receiptFileName, receiptFile);
+            totalElement.textContent = total.toFixed(2);
             
-            if (receiptError) {
-                console.error('Error subiendo comprobante:', receiptError);
-                alert('Error al subir el comprobante. Intente de nuevo.');
+            // Agregar eventos para modificar cantidad
+            document.querySelectorAll('.decrease').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.dataset.id);
+                    const item = cart.find(item => item.id === productId);
+                    if (item.quantity > 1) {
+                        item.quantity--;
+                    } else {
+                        cart = cart.filter(i => i.id !== productId);
+                    }
+                    renderCartItems();
+                    updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('update_cart', {
+                        item_id: productId,
+                        action: 'decrease',
+                        quantity: item.quantity || 0
+                    });
+                });
+            });
+            
+            document.querySelectorAll('.increase').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.dataset.id);
+                    const item = cart.find(item => item.id === productId);
+                    item.quantity++;
+                    renderCartItems();
+                    updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('update_cart', {
+                        item_id: productId,
+                        action: 'increase',
+                        quantity: item.quantity
+                    });
+                });
+            });
+            
+            document.querySelectorAll('.cart-item-remove').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.dataset.id);
+                    cart = cart.filter(item => item.id !== productId);
+                    renderCartItems();
+                    updateCartCount();
+                    
+                    // Trackeo de evento
+                    trackEvent('remove_from_cart', {
+                        item_id: productId
+                    });
+                });
+            });
+        }
+        
+        // Finalizar compra
+        document.getElementById('checkout').addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
                 return;
             }
             
-            // Obtener URL del comprobante
-            const { data: { publicUrl } } = supabase
-                .storage
-                .from('payment-receipts')
-                .getPublicUrl(receiptFileName);
+            // Calcular total
+            const total = cart.reduce((sum, item) => {
+                const product = allProducts.find(p => p.id === item.id);
+                if (product) {
+                    const precio = parseFloat(product.precio) * 0.8;
+                    return sum + (precio * item.quantity);
+                }
+                return sum;
+            }, 0);
             
-            // Crear el pedido
+            // Crear pedido en Supabase
+            createOrder(total)
+                .then(orderId => {
+                    // Simulación de pago exitoso
+                    alert(`¡Compra #${orderId} finalizada con éxito! Gracias por tu pedido.`);
+                    
+                    // Trackeo de evento
+                    trackEvent('purchase', {
+                        transaction_id: orderId,
+                        value: total,
+                        items: cart.length
+                    });
+                    
+                    // Limpiar carrito
+                    cart = [];
+                    updateCartCount();
+                    closeCart();
+                })
+                .catch(error => {
+                    console.error('Error al crear pedido:', error);
+                    alert('Hubo un error al procesar tu pedido. Por favor, inténtalo de nuevo.');
+                });
+        });
+        
+        // Crear pedido en Supabase
+        async function createOrder(total) {
+            // En un entorno real, esto debería manejarse en un backend seguro
             const orderData = {
                 total: total,
-                items: cart,
-                payment_method: paymentMethod,
-                payment_details: paymentDetails,
-                receipt_url: publicUrl,
-                status: 'pending_verification'
+                items: cart.map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity
+                })),
+                status: 'pending'
             };
             
-            const { data: order, error: orderError } = await supabase
-                .from('orders')
+            const { data, error } = await supabase
+                .from('pedidos')
                 .insert([orderData])
                 .select();
             
-            if (orderError) {
-                console.error('Error creando pedido:', orderError);
-                alert('Error al procesar tu pedido. Por favor, inténtalo de nuevo.');
-                return;
+            if (error) throw error;
+            
+            return data[0].id;
+        }
+        
+        // Trackeo de eventos
+        function trackEvent(eventName, params = {}) {
+            // En un entorno real, esto se enviaría a Google Analytics
+            console.log(`Evento: ${eventName}`, params);
+            
+            // Simulación de envío a GA
+            if (typeof gtag === 'function') {
+                gtag('event', eventName, params);
             }
+        }
+        
+        // Iniciar cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
             
-            // Mostrar confirmación
-            alert(`¡Pedido #${order[0].id} creado con éxito! 
-                   Estamos verificando tu pago. Te notificaremos cuando sea confirmado.`);
+            // Hacer que el logo sea enfocable
+            document.querySelector('.logo').setAttribute('tabindex', '0');
             
-            // Limpiar carrito
-            cart = [];
-            updateCartCount();
-            closeCart();
+            // Añadir aria-labels a elementos importantes
+            document.querySelector('.floating-badge').setAttribute('aria-label', 'Contactar por WhatsApp');
+            document.querySelector('.cart-icon').setAttribute('aria-label', 'Carrito de compras');
             
-            // Trackeo de evento
-            trackEvent('purchase', {
-                transaction_id: order[0].id,
-                value: total,
-                items: cart.length,
-                payment_method: paymentMethod
-            });
+            // Inicializar Google Analytics (simulado)
+            if (typeof gtag === 'function') {
+                gtag('config', 'G-TUCODIGO');
+            }
         });
     </script>
 </body>
 </html>
+
 
